@@ -39,5 +39,12 @@
 "graffiticolor": "Color:",
 "graffitiopacity": "Opacity:",
 "graffitithickness": "Thickness:",
-"vkifyteamavarepl": "Replace <a href='/team'>OpenVK team</a> avatar"
+"vkifyteamavarepl": "Replace <a href='/team'>OpenVK team</a> avatar",
+"vkifyscrobble": "Music scrobbling",
+"vkifyaddlastfm": "connect last.fm",
+"vkifylastfmtokentrue": "logged off",
+"vkifylastfmtokenfalse": "logged in",
+"vkifylflogin": "Confirm connect on Last.fm, then press ОК",
+"vkifylfloginsucc": "Last.fm successfully connected!",
+"vkifylfloginerr": "Login error! Check the console."
 }
