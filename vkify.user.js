@@ -1,12 +1,11 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.8.1
+// @version      1.8.2
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
 // @match        *://openvk.xyz/*
-// @match        *://vepurovk.xyz/*
 // @run-at       document-start
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/koke228666/VKify/refs/heads/main/vkify.user.js
@@ -779,12 +778,12 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
     md5script.setAttribute('src','https://rawcdn.githack.com/koke228666/VKify/main/scripts/md5.js');
     document.head.appendChild(md5script);
     if (enable_scrobble == 'true') {
-}
-    const SetTracko = player.setTrack;
-    player.setTrack = async function(id, ref) {
-      await SetTracko.call(player, id, ref);
-      scrobbleCurrentTrack();
-    };
+        const SetTracko = player.setTrack;
+        player.setTrack = async function(id, ref) {
+            await SetTracko.call(player, id, ref);
+            scrobbleCurrentTrack();
+        };
+     }
 if (vkgraffiti == 'true') {
     window.initGraffiti = function(event) {
         var msgbox = new CMessageBox({
