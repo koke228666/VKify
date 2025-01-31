@@ -39,5 +39,12 @@
 "graffiticolor": "Цвет:",
 "graffitiopacity": "Интенсивность:",
 "graffitithickness": "Толщина:",
-"vkifyteamavarepl": "Заменять аватарку <a href='/team'>команды OpenVK</a>"
+"vkifyteamavarepl": "Заменять аватарку <a href='/team'>команды OpenVK</a>",
+"vkifyscrobble": "Скробблинг музыки",
+"vkifyaddlastfm": "войти в last.fm",
+"vkifylastfmtokentrue": "вход совершён",
+"vkifylastfmtokenfalse": "вход не совершён",
+"vkifylflogin": "Подтвердите вход на сайте Last.fm, затем нажмите ОК",
+"vkifylfloginsucc": "Last.fm успешно подключен!",
+"vkifylfloginerr": "Ошибка входа! Проверьте консоль."
 }
