@@ -70,7 +70,7 @@ const ru_RU = `{
     "vkifylastfmtokentrue": "вход совершён",
     "vkifylastfmtokenfalse": "вход не совершён",
     "vkifylflogin": "Подтвердите вход на сайте Last.fm, затем нажмите ОК",
-    "vkifylfloginsucc": "Last.fm успешно подключен!",
+    "vkifylfloginsucc": "Last.fm успешно подключён!",
     "vkifylfloginerr": "Ошибка входа! Проверьте консоль."
 }`;
     function mergeLocalization(mainLoc, defaultLoc) {
