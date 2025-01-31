@@ -8,7 +8,7 @@
 @updateURL      https://raw.githubusercontent.com/koke228666/VKify/refs/heads/main/vkify.user.css
 ==/UserStyle== */
 
-@-moz-document domain("ovk.to"), domain("openvk.xyz"), domain("vepurovk.xyz") {
+@-moz-document domain("ovk.to"), domain("openvk.xyz") {
 .musicIcon {
 	background-repeat: no-repeat;
 	cursor: pointer;
