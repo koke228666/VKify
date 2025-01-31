@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.7.2
+// @version      1.8
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -65,7 +65,14 @@ const ru_RU = `{
     "graffiticolor": "Цвет:",
     "graffitiopacity": "Интенсивность:",
     "graffitithickness": "Толщина:",
-    "vkifyteamavarepl": "Заменять аватарку <a href=\\"/team\\">команды OpenVK</a>"
+    "vkifyteamavarepl": "Заменять аватарку <a href=\\"/team\\">команды OpenVK</a>",
+    "vkifyscrobble": "Скробблинг музыки",
+    "vkifyaddlastfm": "войти в last.fm",
+    "vkifylastfmtokentrue": "вход совершён",
+    "vkifylastfmtokenfalse": "вход не совершён",
+    "vkifylflogin": "Подтвердите вход на сайте Last.fm, затем нажмите ОК",
+    "vkifylfloginsucc": "Last.fm успешно подключен!",
+    "vkifylfloginerr": "Ошибка входа! Проверьте консоль."
 }`;
     function mergeLocalization(mainLoc, defaultLoc) {
         const result = { ...defaultLoc };
@@ -107,6 +114,8 @@ const ru_RU = `{
     const vkgraffiti = localStorage.getItem('vkgraffiti');
     const team_ava_repl = localStorage.getItem('team_ava_repl');
     const team_ava = localStorage.getItem('team_ava');
+    const enable_scrobble = localStorage.getItem('enable_scrobble');
+    var lastfm_token = localStorage.getItem('LASTFM_TOKEN');
     if (!(firstload)) {
         localStorage.setItem('firstload', 'true')
         location.reload();
@@ -186,6 +195,14 @@ const ru_RU = `{
         localStorage.setItem('team_ava_repl', 'true');
          const team_ava_repl = 'true';
     }
+    if (!(enable_scrobble)) {
+        localStorage.setItem('enable_scrobble', 'false');
+         const enable_scrobble = 'false';
+    }
+    if (!(lastfm_token)) {
+        localStorage.setItem('LASTFM_TOKEN', '');
+         const team_ava_repl = 'lastfm_token';
+    }
     if (proxyvkemoji == 'true') {
         var vkemojiserver = 'https://koke228.ru/vkemoji';
     } else {
@@ -196,6 +213,144 @@ const ru_RU = `{
        var vkifysett = `<a href="/settings?vkify" target="_blank" class="link">${localization.vkifysettingsfooter}</a>`;
     } else {
        var vkifysett = '';
+    }
+
+    var LASTFM_API_KEY = '22ca1fb2d2dbdb6a67c2bf9b3f28a03c'; //да это токены вкифу и что
+    var LASTFM_API_SECRET = 'aad4d21cadb5b4fad160b16e3f956e92';
+
+    const lfauth = {
+        getApiSignature: function(params) {
+            const keys = Object.keys(params);
+            let string = '';
+
+            keys.sort();
+            keys.forEach(function(key) {
+                if (key !== 'format' && key !== 'callback') {
+                    string += key + params[key];
+                }
+            });
+
+            string += LASTFM_API_SECRET;
+
+            return hex_md5(string);
+        }
+    };
+
+    //воруем токен
+    async function getLFToken() {
+        const url = `https://ws.audioscrobbler.com/2.0/?method=auth.gettoken&api_key=${LASTFM_API_KEY}&format=json`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.token) {
+            return data.token;
+        } else {
+            throw new Error('Failed to get token: ' + data.message);
+        }
+    }
+
+    //дипсик чёта сделал я хз
+    function authorizeLF(token) {
+        const authUrl = `https://www.last.fm/api/auth/?api_key=${LASTFM_API_KEY}&token=${token}`;
+        window.open(authUrl, '_blank');
+    }
+
+    async function getSessionKey(token) {
+        const params = {
+            method: 'auth.getSession',
+            api_key: LASTFM_API_KEY,
+            token: token,
+            format: 'json'
+        };
+
+        const signature = lfauth.getApiSignature(params);
+        params.api_sig = signature;
+
+        const queryString = new URLSearchParams(params).toString();
+        const url = `https://ws.audioscrobbler.com/2.0/?${queryString}`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.session && data.session.key) {
+            return data.session.key;
+        } else {
+            throw new Error('Failed to get session key: ' + data.message);
+        }
+    }
+
+    async function authenticateLF() {
+        try {
+            const token = await getLFToken();
+
+            authorizeLF(token);
+            alert(localization.vkifylflogin);
+
+            const newSessionKey = await getSessionKey(token);
+            localStorage.setItem('LASTFM_TOKEN', newSessionKey);
+            lastfm_token = newSessionKey;
+            alert(localization.vkifylfloginsucc);
+            location.reload();
+        } catch (error) {
+            console.error('Authentication failed:', error);
+            alert(localization.vkifylfloginerr);
+        }
+    }
+    window.authenticateLF = authenticateLF;
+    async function scrobbleTrack(trackName, performer) {
+        if (!lastfm_token) {
+            console.error('Session key is missing. Please authenticate first.');
+            return;
+        }
+
+        const method = 'track.scrobble';
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        const params = {
+            method: method,
+            api_key: LASTFM_API_KEY,
+            sk: lastfm_token,
+            artist: performer,
+            track: trackName,
+            timestamp: timestamp,
+            format: 'json'
+        };
+
+        //у меня жопа сгорела с этого, ненавижу, пришлось адаптировать https://github.com/fxb/javascript-last.fm-api
+        const signature = lfauth.getApiSignature(params);
+        params.api_sig = signature;
+
+        const formData = new URLSearchParams();
+        for (const key in params) {
+            formData.append(key, params[key]);
+        }
+
+        // Отправляем запрос на Last.fm
+        const response = await fetch('https://ws.audioscrobbler.com/2.0/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData
+        });
+        const data = await response.json();
+        if (data.error) {
+            console.error('Last.fm Error:', data.message);
+        } else {
+            console.log('Track scrobbled successfully:', data);
+        }
+    }
+
+    async function scrobbleCurrentTrack() {
+        if (player && player.currentTrack) {
+            const trackName = player.currentTrack.name;
+            const performer = player.currentTrack.performer;
+            if (trackName && performer) {
+                await scrobbleTrack(trackName, performer);
+            } else {
+                console.error('Track name or performer is missing');
+            }
+        } else {
+            console.error('Player or currentTrack is not defined');
+        }
     }
     if (enablefartscroll == 'true') {
     /* возвращаем fartscroll в опэнвэка */
@@ -620,6 +775,22 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
     const ovkuserid = window.openvk.current_id;
     const csrfToken = document.querySelector('meta[name="csrf"]').getAttribute('value');
     document.title = document.title.replace("OpenVK", localization.vknaming);
+    var md5script = document.createElement('script');
+    md5script.setAttribute('src','https://rawcdn.githack.com/koke228666/VKify/main/scripts/md5.js');
+    document.head.appendChild(md5script);
+    if (enable_scrobble == 'true') {
+    player.dump = function() {
+        const final = {
+            context: this.context,
+            current_track_id: this.current_track_id,
+            tracks: this.tracks,
+            time: this.audioPlayer.currentTime,
+        }
+
+        localStorage.setItem('audio.lastDump', JSON.stringify(final))
+        console.log('Audio | Tracks was dumped')
+        scrobbleCurrentTrack();
+    }}
 if (vkgraffiti == 'true') {
     window.initGraffiti = function(event) {
         var msgbox = new CMessageBox({
@@ -1560,8 +1731,12 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                           <img style="width: 50px;" alt="" src="data:image/jpeg;base64,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"/>
                           <input name="team_ava" type="radio" id="team_ava" value="2">
                           <img style="width: 50px;" alt="" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2NjIpLCBxdWFsaXR5ID0gOTMK/9sAQwACAgICAgECAgICAwICAwMGBAMDAwMHBQUEBggHCQgIBwgICQoNCwkKDAoICAsPCwwNDg4PDgkLEBEQDhENDg4O/9sAQwECAwMDAwMHBAQHDgkICQ4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4O/8AAEQgAMgAyAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwDAQACEQMRAD8A+SPBPhC31u1v9b1m+XSvC2lgS6levjhcEkLnjJx1OcZzggHGF4l+LHwM0/whqFh4Zt9X1PXhGsdtqDRsImYfebDY+XP3eM4x1OazvFHi6w079jnxd4YMVwuo31zE6SLCGj2kx8Ft4Kn5T0U5468AfFm4gdOgyPl/z6//AK+jfIQwuKx+Mq1K9WcIQlaMYvlTSSd3bV3bfkfcTqUsowmH5aEJyqR525rm3bSSV7W0+Z71/wALgcQhVSX7mAPKTAP/AOo/jkeorqE+NnhRdNt45tL1KWZICJXRYwGfYMEfN0LZP+7ivqjwp/wSV/aA8YfC3w34tsPHnw+g0/XNKt9Rt47i/v8AzUjniEqh8WhG4B8HBIz3PJZPFH/BI/8Aah0Pwpd6hpGq+CPGFzDGXXTtL1i4iuJsdkNxBGhPoC6/XuPt8tq/2bUlNRVS6taouZL0T2Z83m+OlnFKNOVOFLld70oqm3paza3Xl3Pi/wARfF+yubm1Hh+zvrWLGJ/NSLJ4GSMk993XtnPQ41/DvjGDXTFBMi+bOGMLCMqdyjLKw6cc4+mOep8B1bStT8P+LNS0LW9PuNJ1nTLqS0vrG5iMc1tNGxR43U8hlZcEeo7YGz1v4Z+GLjUvBeqeJIruCCHTdUgVoC371t2BwARxg4yR69uK+qjmeBxtKpRxlKnTXK3GUY8rUlqk7Xum9NT5efJgqcW5u10tW3u7fmem7QONp/Oiq0mz7RJmYA7jwWxiivjLo9Q53x8Fb4R6lMVwCYgCQwP3hwMcfgf/AK1fNTnbCzEAnHUnPOP/AK/69+rfZGu3Ekn7CPi/bLMIxqMIZVukCnHldUIy34f418Ysf3OAccnqc/Xr/n9SPJwNd1p1k1blm166L/M9DE5pLMoU6bhy+wj7Pe97Nu/l8VreR/Xrrdh8Rtd/4Ioabo3wjmu7f4mXPwx06Pw7JYaillOLn7JDt2Tu6LGcZ5Lj615n+xDof7T/AMLf2ffiLqf7Xniy7uYY547rR49a1yPVrzT4I45Dcu9xE8gKN+7KpvYjY3C5xWr4x8ceLvA//BEtfFHgS6lsvGGk/C+xn0qaG2Wd45VtIcERurKx68EGvkz/AIJ6ftKftYfFz48eK9L+MS3uv/D+30R7iLWr3w7HYfZbwTRrHCkscUayb0aUlCGI2AjbyD6555+O37T/AMR9C+Lf/BQj4t/ETwvbvb+HtZ8QSzacHi8t5YkVYllZcZUyeXvKkZBfB54PZfBm0uZ/2XPG17HazS2cOs226ZLdWijPyE5fqp5+h468k+8/8FUvCfg3wz/wUb02/wDDFjbaZqHiDwrBqWvW1qoRHujcTxecyjgPIkabjj5iCTksd3mPwA2H9gH4vyCMFhq9qA5tW3DhD/rM479OoznndXl4+s6FFSSv70V98kjCrg446KpydrNS/wDAXf8AQ5x5IzKx3P1PQD/GisY3abj8/f0or0DczdW1O9l/Zc8UaZBMotPtEM00TWKvu5U/60jKn5TgZHQ9zXzRvGCBg9gT/L9P/wBX8Puuk60lhNOjwRXttcRCG5t5AP3qZyV3ds//AF+uCKf9jfDC51BJJrLXrCN5CTb25Dqq4JwCQ3IOB17d8Zr6N4TBV8HGrh3CnOKfOn7rk19pfzNqy76WPVp4ajiIw9nKMJbO7td33v6b+h+kHg7/AIK0N4S+EvhXwufgCb5tH0i208XX/CeeV5/kwrHv2f2eduducZOM4yas6/8A8FfvE134emh8MfAyw0XVipEN1qviuS/iQ9iYktoC2MjpIP1GfziTw38Jlii8yLxNuIj3cDH+3/B0/wA+tdZaeF/2eG0CKS9l8Yx3pgYuFxtD+Z2/dH+E+/618K8yiv8Al1P/AMBZ7FXh+rRin9You/apFnivxG+JPjH4s/GrXfH3j3WX13xRqku+6nZQqqqqFSNEGAkaKAqqvAA+pPtfwm1G80/9kPx3HHctBZ3WsQIYlkciUqEzlQNvAx8x9/Sob3Q/2erHUftVjaeLNWRZpsW1xJsWQBB5WSEQ435zhgSO44NM8ReNbO88K2nhnwzo6eF/CVo2+LT1m3tM+RiSQ85bjpk9upG4+/hnQrYf21RaNO0ZLW/RtdLbr5HwGYxxMcUsJST91xbmn7ttG0n17NW7oxWv0EjAyqDnkGiuWNy2446Z45WisrI9IzoyfKBzzuFaUJO2Xk8RjHtyaKKYEys2W5PC8c+xp4J2XCZOzeTt7dqKKT2AgmZt6HJyV5561nSk/veTRRQgLaqpQEqCcelFFFMD/9k="/>
-						<br><br>
-						<input value="${tr('save')}" class="button" type="submit" id="save">
+					      <br><br>
+						  <input type="checkbox" checked="" id="enable_scrobble">
+						  <label for="enable_scrobble" class="nobold">${localization.vkifyscrobble}</label>
+                          <a onclick="authenticateLF();" style="margin-left: 25px;">${localization.vkifyaddlastfm} (${lastfm_token ?? "" !== "" ? localization.vkifylastfmtokentrue : localization.vkifylastfmtokenfalse})</a>
+                          <br><br>
+						  <input value="${tr('save')}" class="button" type="submit" id="save">
 						</div>
                         </div>
                     </div>
@@ -1593,6 +1768,8 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         localStorage.setItem('vkgraffiti', document.getElementById('vkgraffiti').checked);
         localStorage.setItem('team_ava_repl', document.getElementById('team_ava_repl').checked);
         localStorage.setItem('team_ava', document.querySelector('input[name="team_ava"]:checked').value);
+        localStorage.setItem('team_ava_repl', document.getElementById('team_ava_repl').checked);
+        localStorage.setItem('enable_scrobble', document.getElementById('enable_scrobble').checked);
         NewNotification('VKify', localization.vkifysaved, popupimg, () => {}, 5000, false);
         setTimeout("location.reload();", 1000);
     }
@@ -1612,6 +1789,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         document.getElementById('profilebg').checked = (/true/).test(localStorage.getItem('profilebg'));
         document.getElementById('vkgraffiti').checked = (/true/).test(localStorage.getItem('vkgraffiti'));
         document.getElementById('team_ava_repl').checked = (/true/).test(localStorage.getItem('team_ava_repl'));
+        document.getElementById('enable_scrobble').checked = (/true/).test(localStorage.getItem('enable_scrobble'));
         const headradios = document.querySelectorAll(`input[type="radio"][name="vk2012head"]`);
         headradios.forEach(radio => {
             if (radio.value === localStorage.getItem('vk2012_header_type')) {
