@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.8
+// @version      1.8.1
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -779,18 +779,12 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
     md5script.setAttribute('src','https://rawcdn.githack.com/koke228666/VKify/main/scripts/md5.js');
     document.head.appendChild(md5script);
     if (enable_scrobble == 'true') {
-    player.dump = function() {
-        const final = {
-            context: this.context,
-            current_track_id: this.current_track_id,
-            tracks: this.tracks,
-            time: this.audioPlayer.currentTime,
-        }
-
-        localStorage.setItem('audio.lastDump', JSON.stringify(final))
-        console.log('Audio | Tracks was dumped')
-        scrobbleCurrentTrack();
-    }}
+}
+    const SetTracko = player.setTrack;
+    player.setTrack = async function(id, ref) {
+      await SetTracko.call(player, id, ref);
+      scrobbleCurrentTrack();
+    };
 if (vkgraffiti == 'true') {
     window.initGraffiti = function(event) {
         var msgbox = new CMessageBox({
