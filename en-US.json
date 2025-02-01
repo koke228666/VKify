@@ -46,5 +46,6 @@
 "vkifylastfmtokenfalse": "logged in",
 "vkifylflogin": "Confirm connect on Last.fm, then press ОК",
 "vkifylfloginsucc": "Last.fm successfully connected!",
-"vkifylfloginerr": "Login error! Check the console."
+"vkifylfloginerr": "Login error! Check the console.",
+"vkifyshowgift": "Show last gift in left menu"
 }
