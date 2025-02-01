@@ -26,7 +26,7 @@ VKify — аддон для OpenVK, который старается прибл
 1. Для начала необходимо установить данные расширения для браузера:
 - [Tampermonkey](https://www.tampermonkey.net/?locale=ru) 
 - [Stylus](https://add0n.com/stylus.html)
-  <br> Учтите: если ваш браузер Chromium-based, важно [сделать это](https://www.tampermonkey.net/faq.php#Q209), иначе я дам вам по шапке. Не пишите мне ни о каких проблемах, возникающих на подобных браузерах. Установите [величайший браузер всех времён](https://www.mozilla.org/firefox), или же [его более крутую версию](https://www.waterfox.net/)
+  <br> Учтите: если ваш браузер Chromium-based, важно [сделать это](https://www.tampermonkey.net/faq.php#Q209), иначе я дам вам по шапке. Не пишите мне ни о каких проблемах, возникающих на подобных браузерах. Установите [величайший браузер всех времён](https://www.mozilla.org/firefox), или же [его более крутую версию](https://www.waterfox.net/), ну или [его самую интересную версию](https://zen-browser.app/)
 2. Выберите тему "ВКонтакте 2007" в [настройках интерфейса OpenVK](https://ovk.to/settings?act=interface), в настройках VKify вы сможете включить дизайн ВКонтакте 2012
 3. Потыкайте следующие ссылки:
   <br>[Скрипт](https://raw.githubusercontent.com/koke228666/VKify/refs/heads/main/vkify.user.js)
