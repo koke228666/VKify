@@ -35,7 +35,7 @@
 "vkifysettingsfooter": "налаштування VKify",
 "vkifygraffiti": "Використовувати графіті з ВКонтакте за 2013 рік",
 "graffitiflushhistory": "Очистити",
-"graffitibackhistory": "Відмінити",
+"graffitibackhistory": "Скасувати",
 "graffiticolor": "Колір:",
 "graffitiopacity": "Інтенсивність:",
 "graffitithickness": "Товщина:",
@@ -45,6 +45,6 @@
 "vkifylastfmtokentrue": "вхід здійснено",
 "vkifylastfmtokenfalse": "вхід не здійснено",
 "vkifylflogin": "Підтвердіть вхід на сайті Last.fm, потім натисніть ОК",
-"vkifylfloginsucc": "Last.fm успішно підключено!",
+"vkifylfloginsucc": "Вхід у Last.fm виконано!",
 "vkifylfloginerr": "Помилка входу! Перевірте консоль."
 }
