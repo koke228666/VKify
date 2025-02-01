@@ -46,5 +46,6 @@
 "vkifylastfmtokenfalse": "вход не совершён",
 "vkifylflogin": "Подтвердите вход на сайте Last.fm, затем нажмите ОК",
 "vkifylfloginsucc": "Last.fm успешно подключён!",
-"vkifylfloginerr": "Ошибка входа! Проверьте консоль."
+"vkifylfloginerr": "Ошибка входа! Проверьте консоль.",
+"vkifyshowgift": "Отображать последний полученный подарок в боковом меню"
 }
