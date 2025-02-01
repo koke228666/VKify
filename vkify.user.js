@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.8.2
+// @version      1.8.3
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -71,7 +71,8 @@ const ru_RU = `{
     "vkifylastfmtokenfalse": "вход не совершён",
     "vkifylflogin": "Подтвердите вход на сайте Last.fm, затем нажмите ОК",
     "vkifylfloginsucc": "Last.fm успешно подключён!",
-    "vkifylfloginerr": "Ошибка входа! Проверьте консоль."
+    "vkifylfloginerr": "Ошибка входа! Проверьте консоль.",
+    "vkifyshowgift": "Отображать последний полученный подарок в боковом меню"
 }`;
     function mergeLocalization(mainLoc, defaultLoc) {
         const result = { ...defaultLoc };
@@ -115,6 +116,7 @@ const ru_RU = `{
     const team_ava = localStorage.getItem('team_ava');
     const enable_scrobble = localStorage.getItem('enable_scrobble');
     var lastfm_token = localStorage.getItem('LASTFM_TOKEN');
+    const gifts_enabled = localStorage.getItem('gifts_enabled');
     if (!(firstload)) {
         localStorage.setItem('firstload', 'true')
         location.reload();
@@ -201,6 +203,10 @@ const ru_RU = `{
     if (!(lastfm_token)) {
         localStorage.setItem('LASTFM_TOKEN', '');
          const team_ava_repl = 'lastfm_token';
+    }
+    if (!(gifts_enabled)) {
+        localStorage.setItem('gifts_enabled', 'false');
+         const gifts_enabled = 'true';
     }
     if (proxyvkemoji == 'true') {
         var vkemojiserver = 'https://koke228.ru/vkemoji';
@@ -1286,6 +1292,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
     }
     }
     async function parseGifts() {
+        if (gifts_enabled == 'true'){
         try {
             const gift_data = await window.OVKAPI.call("gifts.get", {"user_id": window.openvk.current_id, "count": 1});
             if (!gift_data == "") {
@@ -1308,6 +1315,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             console.error('подарочки не грузяца:', error);
             return null;
         }
+    }
     }
         parseGifts();
         const page_header = document.querySelector('.page_header');
@@ -1541,7 +1549,9 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         const footer = document.querySelectorAll('.page_footer');
             if (footer[0].textContent.includes('OpenVK Altair Preview')) {
                     footer[0].innerHTML = vkfooter;
-                    document.querySelector('#news').insertAdjacentHTML('afterend', window.lastgift);
+                    if (gifts_enabled == 'true') {
+                        document.querySelector('#news').insertAdjacentHTML('afterend', window.lastgift);
+                    }
                 /* замена счётчиков новых уведомлений */
                 document.querySelectorAll('object[type="internal/link"]').forEach(obj => {
                     const boldElement = obj.querySelector('b');
@@ -1729,6 +1739,9 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
 						  <label for="enable_scrobble" class="nobold">${localization.vkifyscrobble}</label>
                           <a onclick="authenticateLF();" style="margin-left: 25px;">${localization.vkifyaddlastfm} (${lastfm_token ?? "" !== "" ? localization.vkifylastfmtokentrue : localization.vkifylastfmtokenfalse})</a>
                           <br><br>
+						  <input type="checkbox" id="gifts_enabled" checked="">
+						  <label class="nobold" for="gifts_enabled">${localization.vkifyshowgift}</label>
+						  <br><br>
 						  <input value="${tr('save')}" class="button" type="submit" id="save">
 						</div>
                         </div>
@@ -1763,6 +1776,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         localStorage.setItem('team_ava', document.querySelector('input[name="team_ava"]:checked').value);
         localStorage.setItem('team_ava_repl', document.getElementById('team_ava_repl').checked);
         localStorage.setItem('enable_scrobble', document.getElementById('enable_scrobble').checked);
+        localStorage.setItem('gifts_enabled', document.getElementById('gifts_enabled').checked);
         NewNotification('VKify', localization.vkifysaved, popupimg, () => {}, 5000, false);
         setTimeout("location.reload();", 1000);
     }
@@ -1783,6 +1797,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         document.getElementById('vkgraffiti').checked = (/true/).test(localStorage.getItem('vkgraffiti'));
         document.getElementById('team_ava_repl').checked = (/true/).test(localStorage.getItem('team_ava_repl'));
         document.getElementById('enable_scrobble').checked = (/true/).test(localStorage.getItem('enable_scrobble'));
+        document.getElementById('gifts_enabled').checked = (/true/).test(localStorage.getItem('gifts_enabled'));
         const headradios = document.querySelectorAll(`input[type="radio"][name="vk2012head"]`);
         headradios.forEach(radio => {
             if (radio.value === localStorage.getItem('vk2012_header_type')) {
