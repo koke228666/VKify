@@ -51,5 +51,8 @@
 "vkifyscrobbleacc_help": "If scrobbling is not working for you, try logging in again",
 "vkifyaboutt": "About",
 "vkifyabout": "<b>VKify</b> - a small project that <i>tries</i> bring OpenVK's design closer to the VKontakte of the 2010s.",
-"vkifylang": "Language"
+"vkifylang": "Language",
+"vkifysmusic": "Music",
+"vkifysmaint": "Main",
+"vkifysmain": "Main settings"
 }
