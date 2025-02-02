@@ -51,5 +51,8 @@
 "vkifyscrobbleacc_help": "Если у вас не работает скробблинг, то попробуйте войти заново",
 "vkifyaboutt": "О проекте",
 "vkifyabout": "<b>VKify</b> - маленький проект, который <i>пытается</i> приблизить дизайн OpenVK к ВКонтакте 2010-х годов.",
-"vkifylang": "Язык"
+"vkifylang": "Язык",
+"vkifysmusic": "Музыка",
+"vkifysmaint": "Основные",
+"vkifysmain": "Основные настройки"
 }
