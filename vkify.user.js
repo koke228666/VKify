@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9
+// @version      1.9.1
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -799,6 +799,13 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
                 break;
         }
     }
+    function fiximg() {
+        u(`.attachments`).nodes.forEach(node => {
+            if(node.querySelectorAll(".media_makima").length < 2) {
+                u(node).find(".media_makima").removeClass("media_makima")
+            }
+        })
+    }
     if (team_ava_repl == 'true') {
         switch(String(team_ava)) {
             case "1":
@@ -823,6 +830,7 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
                 scrobbleCurrentTrack();
             };
         }
+        fiximg();
         if (vkgraffiti == 'true') {
             window.initGraffiti = function(event) {
                 var msgbox = new CMessageBox({
@@ -1568,6 +1576,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
 
         let mo = new MutationObserver(function(mutations) {
             addtips();
+            fiximg();
             fullattachmenu();
             if (enable_vk2012) {
                 try {
