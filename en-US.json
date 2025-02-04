@@ -54,5 +54,11 @@
 "vkifylang": "Language",
 "vkifysmusic": "Music",
 "vkifysmaint": "Main",
-"vkifysmain": "Main settings"
+"vkifysmain": "Main settings",
+"vkifyignames": "Ignored names:",
+"vkifyigartists": "Ignored artists:",
+"vkifyigtracks": "Ignored track IDs:",
+"vkifyiglabel": "Tracks with any attribute in this field will not be scrobbled. Each value must be separated by a comma and a space (Alo Sounds, OpenVK)",
+"vkifycurrentlyplaying": "Now playing: "
+
 }
