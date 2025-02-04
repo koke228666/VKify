@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.4.5
+@version        1.5
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -43,7 +43,7 @@
 }
 
 .audioEntry.nowPlaying {
-	background: #5A7DA3;
+	background: #5f7d9d;
 	/* outline: 1px solid #4D6782; */
 	outline: none !important;
 	box-sizing: border-box;
@@ -567,4 +567,37 @@ background-position: -108px -52px !important;
 
 .tippy-box[data-animation=shift-toward][data-state=hidden]{opacity:0}.tippy-box[data-animation=shift-toward][data-state=hidden][data-placement^=top]{transform:translateY(-10px)}.tippy-box[data-animation=shift-toward][data-state=hidden][data-placement^=bottom]{transform:translateY(10px)}.tippy-box[data-animation=shift-toward][data-state=hidden][data-placement^=left]{transform:translateX(-10px)}.tippy-box[data-animation=shift-toward][data-state=hidden][data-placement^=right]{transform:translateX(10px)}
 .tippy-box[data-animation=shift-away][data-state=hidden]{opacity:0}.tippy-box[data-animation=shift-away][data-state=hidden][data-placement^=top]{transform:translateY(10px)}.tippy-box[data-animation=shift-away][data-state=hidden][data-placement^=bottom]{transform:translateY(-10px)}.tippy-box[data-animation=shift-away][data-state=hidden][data-placement^=left]{transform:translateX(10px)}.tippy-box[data-animation=shift-away][data-state=hidden][data-placement^=right]{transform:translateX(-10px)}
+
+.headerMusicBtn {
+  background-position: -96px 0 !important;
+}
+
+.headerMusicBtn:hover {
+  background-position: -168px 0 !important;
+}
+
+.headerMusicBtn.paused {
+  background-position: -24px 0 !important;
+}
+
+.headerMusicBtn.paused:hover {
+  background-position: -72px 0 !important;
+}
+
+.bigPlayer .playButtons .playButton.pause {
+  background-position: -72px -25px !important
+}
+
+.bigPlayer .playButtons .playButton.pause:hover {
+  background-position: -120px -25px !important;
+}
+
+.bigPlayer .playButtons .playButton {
+  background-position: 0px -25px !important;
+}
+
+.bigPlayer .playButtons .playButton:hover {
+  background-position: -48px -25px !important;
+}
+
 }
