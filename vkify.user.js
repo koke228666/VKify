@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.1
+// @version      1.9.2
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -79,7 +79,12 @@
     "vkifylang": "Язык",
     "vkifysmusic": "Музыка",
     "vkifysmaint": "Основные",
-    "vkifysmain": "Основные настройки"
+    "vkifysmain": "Основные настройки",
+    "vkifyignames": "Игнорируемые названия:",
+    "vkifyigartists": "Игнорируемые исполнители:",
+    "vkifyigtracks": "Игнорируемые ID треков:",
+    "vkifyiglabel": "Треки, один из атрибутов которых есть в этом поле, не будут скробблиться. Каждое значение должно быть разделено запятой и пробелом (Alo Sounds, OpenVK)",
+    "vkifycurrentlyplaying": "Сейчас воспроизводится: "
 }`;
     window.vkifyloadLocalization = function loadLocalization(loccode) {
         if (loccode == 'ru-RU') {
@@ -149,6 +154,9 @@
     const team_ava = localStorage.getItem('team_ava');
     const enable_scrobble = localStorage.getItem('enable_scrobble');
     var lastfm_token = localStorage.getItem('LASTFM_TOKEN');
+    var ignored_artists = localStorage.getItem('ignored_artists');
+    var ignored_names = localStorage.getItem('ignored_names');
+    var ignored_tracks = localStorage.getItem('ignored_tracks');
     const gifts_enabled = localStorage.getItem('gifts_enabled');
     if (!(firstload)) {
         localStorage.setItem('firstload', 'true')
@@ -235,7 +243,19 @@
     }
     if (!(lastfm_token)) {
         localStorage.setItem('LASTFM_TOKEN', '');
-        const team_ava_repl = 'lastfm_token';
+        const lastfm_token = '';
+    }
+    if (!(ignored_names)) {
+        localStorage.setItem('ignored_names', '');
+        const ignored_names = '';
+    }
+    if (!(ignored_artists)) {
+        localStorage.setItem('ignored_artists', '');
+        const ignored_artists = '';
+    }
+    if (!(ignored_tracks)) {
+        localStorage.setItem('ignored_tracks', '');
+        const ignored_tracks = '';
     }
     if (!(gifts_enabled)) {
         localStorage.setItem('gifts_enabled', 'false');
@@ -273,6 +293,10 @@
             return hex_md5(string);
         }
     };
+
+    function strToSet(input) {
+        return new Set(input.split(/\s*,\s*/)); /* вот такие пироги */
+    }
 
     //воруем токен
     async function getLFToken() {
@@ -381,7 +405,9 @@
         if (player && player.currentTrack) {
             const trackName = player.currentTrack.name;
             const performer = player.currentTrack.performer;
+            const trackid = window.player.current_track_id;
             if (trackName && performer) {
+                if (!strToSet(ignored_names).has(trackName) && !strToSet(ignored_artists).has(performer) && !strToSet(ignored_tracks).has(String(trackid)))
                 await scrobbleTrack(trackName, performer);
             } else {
                 console.error('Track name or performer is missing');
@@ -1793,6 +1819,15 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                   <input type="checkbox" checked="" id="enable_scrobble">
                   <label for="enable_scrobble" class="nobold">${localization.vkifyscrobble}</label>
                   <a id="scrobble_account" onclick="authenticateLF();" style="margin-left: 25px;">${localization.vkifyaddlastfm} (${lastfm_token ?? "" !== "" ? localization.vkifylastfmtokentrue : localization.vkifylastfmtokenfalse})</a>
+                  <br><br>
+                  <label id="iglabel" for="ignored_names" class="nobold">${localization.vkifyignames}</label><br><br>
+                  <input type="text" id="ignored_names"></input><br><br>
+                  <label id="iglabel" for="ignored_artists" class="nobold">${localization.vkifyigartists}</label><br><br>
+                  <input type="text" id="ignored_artists"></input><br><br>
+                  <label id="iglabel" for="ignored_tracks" class="nobold">${localization.vkifyigtracks}</label><br><br>
+                  <input type="text" id="ignored_tracks"></input>
+                  <br><br>
+                  <a id="currentlyplaying" href="/audio${openvk.current_id}_${player.current_track_id}">${localization.vkifycurrentlyplaying}${player.currentTrack.performer} - ${player.currentTrack.name},  ID: ${player.current_track_id}</a>
                </div></div>
                <div class="page hidden">
               <div class="container_gray">
@@ -1932,6 +1967,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         setTip('label[for="enablevkemoji"]', localization.vkifyenablevkemojidesc)
         setTip('label[for="enablefartscroll"]', localization.vkifyfartscrolldesc)
         setTip('label[for="vkify_settings"]', localization.vkifyfootersettdesc, true)
+        setTip('#iglabel', localization.vkifyiglabel)
         function saveSettings() {
             localStorage.setItem('enable_vkify_settings', document.getElementById('vkify_settings').checked);
             localStorage.setItem('vk2012', document.getElementById('vk2012').checked);
@@ -1956,6 +1992,10 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             localStorage.setItem('team_ava_repl', document.getElementById('team_ava_repl').checked);
             localStorage.setItem('enable_scrobble', document.getElementById('enable_scrobble').checked);
             localStorage.setItem('gifts_enabled', document.getElementById('gifts_enabled').checked);
+            localStorage.setItem('ignored_names', document.getElementById('ignored_names').value);
+            localStorage.setItem('ignored_artists', document.getElementById('ignored_artists').value);
+            localStorage.setItem('ignored_tracks', document.getElementById('ignored_tracks').value);
+
             NewNotification('VKify', localization.vkifysaved, popupimg, () => {}, 5000, false);
             document.querySelector('#ajloader').style = "display: unset;"
             setTimeout("location.reload();", 1000);
@@ -1978,6 +2018,10 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         document.getElementById('team_ava_repl').checked = (/true/).test(localStorage.getItem('team_ava_repl'));
         document.getElementById('enable_scrobble').checked = (/true/).test(localStorage.getItem('enable_scrobble'));
         document.getElementById('gifts_enabled').checked = (/true/).test(localStorage.getItem('gifts_enabled'));
+        document.getElementById('ignored_names').value = localStorage.getItem('ignored_names');
+        document.getElementById('ignored_artists').value = localStorage.getItem('ignored_artists');
+        document.getElementById('ignored_tracks').value = localStorage.getItem('ignored_tracks');
+
         const headradios = document.querySelectorAll(`input[type="radio"][name="vk2012head"]`);
         headradios.forEach(radio => {
             if (radio.value === localStorage.getItem('vk2012_header_type')) {
