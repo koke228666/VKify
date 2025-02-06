@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.3
+// @version      1.9.4
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -1826,7 +1826,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                   <label id="iglabel" for="ignored_tracks" class="nobold">${localization.vkifyigtracks}</label><br><br>
                   <input type="text" id="ignored_tracks"></input>
                   <br><br>
-                  <a id="currentlyplaying" href="/audio${openvk.current_id}_${player.current_track_id}">${localization.vkifycurrentlyplaying}${player.currentTrack.performer} - ${player.currentTrack.name},  ID: ${player.current_track_id}</a>
+                  <a id="currentlyplaying" href="/audio${openvk.current_id}_${player.current_track_id}">${localization.vkifycurrentlyplaying}${player.currentTrack?.performer ?? tr('track_unknown')} - ${player.currentTrack?.name ?? tr('track_noname')},  ID: ${player.current_track_id}</a>
                </div></div>
                <div class="page hidden">
               <div class="container_gray">
