@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.4
+// @version      1.9.5
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -1405,7 +1405,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                                 <option value="apps">${tr("s_by_apps")}</option>
                                                 <option value="audios">${tr("s_by_audios")}</option>
                                                 <option value="audios_playlists">${tr("s_by_audios_playlists")}</option>
-												<option value="docs">${tr("s_by_docs")}</option>
+												<option value="docs">${tr("s_by_documents")}</option>
                                             </select>
                                         </div>
                                         <button class="search_box_button">
