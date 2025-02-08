@@ -6,6 +6,7 @@
 // @author       koke228
 // @match        *://ovk.to/*
 // @match        *://openvk.xyz/*
+// @match        *://vepurovk.xyz/*
 // @run-at       document-start
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/koke228666/VKify/refs/heads/main/vkify.user.js
