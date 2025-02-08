@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.5
+// @version      1.9.6
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -400,7 +400,7 @@
             console.log('Track scrobbled successfully:', data);
         }
     }
-
+var scrobbleTimeout;
     async function scrobbleCurrentTrack() {
         if (player && player.currentTrack) {
             const trackName = player.currentTrack.name;
@@ -408,7 +408,11 @@
             const trackid = window.player.current_track_id;
             if (trackName && performer) {
                 if (!strToSet(ignored_names).has(trackName) && !strToSet(ignored_artists).has(performer) && !strToSet(ignored_tracks).has(String(trackid)))
-                await scrobbleTrack(trackName, performer);
+                clearTimeout(scrobbleTimeout);
+                scrobbleTimeout = setTimeout(async () => {
+                    await scrobbleTrack(trackName, performer);
+                    console.log(`waited ${(player.currentTrack.length/2)*1000} mseconds!`);
+                    }, (player.currentTrack.length/2)*1000);
             } else {
                 console.error('Track name or performer is missing');
             }
@@ -729,6 +733,44 @@ img[src*="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-l
   max-height: 16px !important;
   width: 16px !important;
 }
+.content_title_unexpanded {
+	background-image: none !important;
+	background-repeat: no-repeat;
+	background-color: #eee !important;
+	border-top: solid 1px #eee !important;
+	padding-top: 3px;
+	padding-right: 8px;
+	padding-bottom: 3px;
+	padding-left: 8px;
+	border-bottom: 1px solid #eee !important;
+}
+.content_title_expanded {
+  background: #DEE5EB;
+  border-top: 1px solid #DEE5EB !important;
+  border-bottom: 1px solid #DEE5EB !important;
+  padding: 3px 8px;
+  font-weight: bold;
+  outline: none;
+  color: #45688E;
+  background-image: none !important;
+}
+#news hr {
+  background-color: unset !important;
+  border: none;
+  height: 1px;
+}
+#votesBalance, #news {
+  background-color: unset !important;
+}
+.content_subtitle {
+  background-color: #F1F1F1;
+  display: block;
+  font-size: 11px;
+  border-bottom: 1px solid #F1F1F1;
+  color: #666;
+  padding: 3px 8px;
+  border-top: 1px solid #F1F1F1 !important;
+}
 `;
     const vk2012flat_btns = document.createElement('style');
     vk2012flat_btns.type = 'text/css';
@@ -845,6 +887,7 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
         const ovkuserid = window.openvk.current_id;
         const csrfToken = document.querySelector('meta[name="csrf"]').getAttribute('value');
         document.title = document.title.replace("OpenVK", localization.vknaming);
+        document.querySelector('#news').insertAdjacentHTML('beforebegin', `<div class="menu_divider"></div>`);
         var md5script = document.createElement('script');
         md5script.setAttribute('src','https://rawcdn.githack.com/koke228666/VKify/main/scripts/md5.js');
         document.head.appendChild(md5script);
@@ -1623,6 +1666,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             const footer = document.querySelectorAll('.page_footer');
             if (footer[0].textContent.includes('OpenVK Altair Preview')) {
                 footer[0].innerHTML = vkfooter;
+                document.querySelector('#news').insertAdjacentHTML('beforebegin', `<div class="menu_divider"></div>`);
                 if (gifts_enabled == 'true') {
                     document.querySelector('#news').insertAdjacentHTML('afterend', window.lastgift);
                 }
