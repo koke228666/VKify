@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.1
+@version        1.5.2
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -355,10 +355,9 @@ body.scrolled .toTop:hover,
 
 .tab {
   display: inline-block;
-  padding: 6px 6px;
-  margin-left: 15px;
-  padding-right: 8px;
-  padding-left: 8px;
+  padding: 5px 10px;
+  margin-right: 3px;
+  border-radius: 3px 3px 0 0;
 }
 
 img[src*="/assets/packages/static/openvk/img/loading_mini.gif"] {
@@ -599,5 +598,4 @@ background-position: -108px -52px !important;
 .bigPlayer .playButtons .playButton:hover {
   background-position: -48px -25px !important;
 }
-
 }
