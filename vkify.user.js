@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.6
+// @version      1.9.7
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -85,7 +85,11 @@
     "vkifyigartists": "Игнорируемые исполнители:",
     "vkifyigtracks": "Игнорируемые ID треков:",
     "vkifyiglabel": "Треки, один из атрибутов которых есть в этом поле, не будут скробблиться. Каждое значение должно быть разделено запятой и пробелом (Alo Sounds, OpenVK)",
-    "vkifycurrentlyplaying": "Сейчас воспроизводится: "
+    "vkifycurrentlyplaying": "Сейчас воспроизводится: ",
+    "vkifystar_like": "Использовать звёздочку вместо кнопки лайка",
+    "vkifyonline": "Показывать онлайн (сайта в целом) в строке поиска",
+    "vkifyonlinefr": "Показывать онлайн только друзей",
+    "vkifyonlinefrpopup": "Для работы необходимо включить показ онлайна"
 }`;
     window.vkifyloadLocalization = function loadLocalization(loccode) {
         if (loccode == 'ru-RU') {
@@ -159,6 +163,9 @@
     var ignored_names = localStorage.getItem('ignored_names');
     var ignored_tracks = localStorage.getItem('ignored_tracks');
     const gifts_enabled = localStorage.getItem('gifts_enabled');
+    const starlike = localStorage.getItem('starlike');
+    const onlinea = localStorage.getItem('onlinea');
+    const onlinefr = localStorage.getItem('onlinefr');
     if (!(firstload)) {
         localStorage.setItem('firstload', 'true')
         location.reload();
@@ -259,8 +266,17 @@
         const ignored_tracks = '';
     }
     if (!(gifts_enabled)) {
-        localStorage.setItem('gifts_enabled', 'false');
+        localStorage.setItem('gifts_enabled', 'true');
         const gifts_enabled = 'true';
+    }
+    if (!(starlike)) {
+        localStorage.setItem('starlike', 'false');
+    }
+    if (!(onlinea)) {
+        localStorage.setItem('onlinea', 'true');
+    }
+    if (!(onlinefr)) {
+        localStorage.setItem('onlinefr', 'false');
     }
     if (proxyvkemoji == 'true') {
         var vkemojiserver = 'https://koke228.ru/vkemoji';
@@ -772,6 +788,23 @@ img[src*="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-l
   padding: 3px 8px;
   border-top: 1px solid #F1F1F1 !important;
 }
+.page_header .friends_online {
+  background-repeat: no-repeat;
+  background-image: url("data:image/gif;base64,R0lGODlhCQAKAMQTAL3K2ePo7p6xxr3K2PL099jg6Nvi6s/Z46a3y+jt8uPp79/l7KCyx+vv86y8zsLO3Ozw9Ki5zImguv///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABMALAAAAAAJAAoAAAUp4DQZDiMNoiitayIS7LqIQSwdYmEDKcIKqUmDpUhBIqwIZPKwrZrOVQgAOw==");
+  background-position: 26px 5px;
+  width: 23px;
+  font-weight: bold;
+  color: #89a0ba;
+  font-size: 10px;
+  text-align: right;
+  padding-right: 17px;
+}
+.page_header.search_expanded .friends_online {
+  display: none;
+}
+.page_header.search_expanded .friendslink {
+  display: none;
+}
 `;
     const vk2012flat_btns = document.createElement('style');
     vk2012flat_btns.type = 'text/css';
@@ -811,6 +844,18 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
 img[src*="https://kaslana.ovk.to/hentai/91/91e3d274dcd5c300cbbc8910efb3b518a666f66759cf731116db85ce5ccb6f700a234df72cff76636f6cfc45fbc873b044f4039696dd26e8e49795a94efad2eb_cropped/miniscule.gif"] {
 content: url("data:image/jpeg;base64,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") !important;
 }`
+    if (starlike == 'true') {
+    const likestarst = document.createElement('style');
+    likestarst.type = 'text/css';
+    likestarst.innerHTML = `
+.heart {
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADOSURBVChTY/j//z8Gblt0JBubOCOIQAbti4/KAKm7QKxQGWv9HCwIBUxQGhnEAzEbEMeCeUgARTHQVEYglQjhMSRAaThgBLpvCpDOhnBxApBbJ4DdDDQxFMiZBcQCIBk08BaIk4Du3wT3IFCDEpC6BcTMYAEI+AXEqkCFj0AcZDdzAzGyQhAAeZQLwkRV7ACl/wDxciD+C+YxMDhDaRTFjkD8CohdgdZGAWk3IH4NxE5ADAZgxUD3gmhOIDYGKjwAEgPS+4CUEUgcIs/AAACNB1G2TDDVFQAAAABJRU5ErkJggg==') no-repeat 1px 0 !important;
+  height: 11px !important;
+  width: 11px !important;
+  opacity: 0.4;
+}`
+    document.head.appendChild(likestarst);
+}
     var copydate = '2006-2007';
     if (profilebg != 'true') {
         const prbg = document.createElement('style');
@@ -1441,6 +1486,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                     <form id="search_form" action="/search" method="get">
                                         <div id="search_and_one_more_wrapper">
                                             <input autocomplete="off" type="search" maxlength="79" name="q" placeholder="${tr("header_search")}" title="${tr("header_search")} [Alt+Shift+F]" accesskey="f">
+                                            ${enable_vk2012 == 'true' && onlinea == 'true' ? `<a class="friendslink" href="/friends${ovkuserid}" style="transform: translateX(-42px);width: 43px;"><div class="friends_online">0</div></a>` : ``}
                                             <select name="section">
                                                 <option value="users">${tr("s_by_people")}</option>
                                                 <option value="groups">${tr("s_by_groups")}</option>
@@ -1601,7 +1647,26 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             <br>`;
         const footer = document.querySelectorAll('.page_footer');
         footer[0].innerHTML = vkfooter;
-
+            async function updateOnline() {
+                if (onlinea == 'true') {
+                    if (onlinefr == 'true') {
+                        const friendson = (await window.OVKAPI.call("friends.get", {"user_id": window.openvk.current_id, "count": 99999})).items.filter(user => user.online === 1).length
+                        if (Number(friendson) > 99) {
+                            document.querySelector('.friends_online').textContent = "99+"
+                        } else {
+                            document.querySelector('.friends_online').textContent = friendson
+                        }
+                    } else {
+                        const friendson = (await window.OVKAPI.call("ovk.aboutInstance", {"fields": "statistics"})).statistics.online_users_count
+                        if (Number(friendson) > 99) {
+                            document.querySelector('.friends_online').textContent = "99+"
+                        } else {
+                            document.querySelector('.friends_online').textContent = friendson
+                        }
+                           }
+                }
+            }
+           updateOnline();
         // я чё знаю чтоле что это, это нейронка сделала конвертер
         /*function unicodeToSurrogatePair(unicode) {
             const codePoint = parseInt(unicode, 16);
@@ -1644,10 +1709,12 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         vkifyEmoji();
 
         let mo = new MutationObserver(function(mutations) {
+            updateOnline();
             addtips();
             fiximg();
             fullattachmenu();
             if (enable_vk2012) {
+
                 try {
                     const muslnk = document.querySelector("#headerMusicLinkDiv a");
                     const audioData = localStorage.getItem("audio.lastDump");
@@ -1949,6 +2016,14 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                   <br><br>
                   <input type="checkbox" id="gifts_enabled" checked="">
                   <label class="nobold" for="gifts_enabled">${localization.vkifyshowgift}</label>
+                  <br><br>
+                  <input type="checkbox" id="starlike" checked="">
+                  <label class="nobold" for="starlike">${localization.vkifystar_like}</label>
+                  <br><br>
+                  <input type="checkbox" id="onlinea" checked="">
+                  <label class="nobold" for="onlinea">${localization.vkifyonline}</label>
+                  <input type="checkbox" id="onlinefr" checked="">
+                  <label class="nobold" for="onlinefr">${localization.vkifyonlinefr}</label>
                   </div></div>
                <div class="page hidden">
               <div class="container_gray">
@@ -1980,7 +2055,6 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             const errorpage = pgbody.querySelector('#error_page');
             const tabs = pgbody.querySelectorAll('.tab');
             const tabsa = pgbody.querySelectorAll('.tab a');
-            let currentPageIndex = 0;
 
             window.vkifysetPage = function setPage(page) {
                 try {
@@ -2012,6 +2086,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         setTip('label[for="enablefartscroll"]', localization.vkifyfartscrolldesc)
         setTip('label[for="vkify_settings"]', localization.vkifyfootersettdesc, true)
         setTip('#iglabel', localization.vkifyiglabel)
+        setTip('label[for="onlinefr"]', localization.vkifyonlinefrpopup)
         function saveSettings() {
             localStorage.setItem('enable_vkify_settings', document.getElementById('vkify_settings').checked);
             localStorage.setItem('vk2012', document.getElementById('vk2012').checked);
@@ -2039,6 +2114,9 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             localStorage.setItem('ignored_names', document.getElementById('ignored_names').value);
             localStorage.setItem('ignored_artists', document.getElementById('ignored_artists').value);
             localStorage.setItem('ignored_tracks', document.getElementById('ignored_tracks').value);
+            localStorage.setItem('starlike', document.getElementById('starlike').checked);
+            localStorage.setItem('onlinea', document.getElementById('onlinea').checked);
+            localStorage.setItem('onlinefr', document.getElementById('onlinefr').checked);
 
             NewNotification('VKify', localization.vkifysaved, popupimg, () => {}, 5000, false);
             document.querySelector('#ajloader').style = "display: unset;"
@@ -2065,7 +2143,9 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         document.getElementById('ignored_names').value = localStorage.getItem('ignored_names');
         document.getElementById('ignored_artists').value = localStorage.getItem('ignored_artists');
         document.getElementById('ignored_tracks').value = localStorage.getItem('ignored_tracks');
-
+        document.getElementById('starlike').checked = (/true/).test(localStorage.getItem('starlike'));
+        document.getElementById('onlinea').checked = (/true/).test(localStorage.getItem('onlinea'));
+        document.getElementById('onlinefr').checked = (/true/).test(localStorage.getItem('onlinefr'));
         const headradios = document.querySelectorAll(`input[type="radio"][name="vk2012head"]`);
         headradios.forEach(radio => {
             if (radio.value === localStorage.getItem('vk2012_header_type')) {
