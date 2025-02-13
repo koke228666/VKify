@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.7.1
+// @version      1.9.7.2
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -804,6 +804,25 @@ img[src*="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-l
 }
 .page_header.search_expanded .friendslink {
   display: none;
+}
+#ajloader {
+  background-color: #000 !important;
+  opacity: 0.7 !important;
+  filter: alpha(opacity=70) !important;
+  height: 37.5px !important;
+  -webkit-border-radius: 5px !important;
+  -khtml-border-radius: 5px !important;
+  -moz-border-radius: 5px !important;
+  border-radius: 5px !important;
+  -webkit-box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.35) !important;
+  -moz-box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.35) !important;
+  width: 100px !important;
+}
+#ajloader img {
+  top: 15% !important;
+  position: relative !important;
+  content: url('data:image/gif;base64,R0lGODlhQAAQAJkCAJ6ens3Nzf///AAAACH5BAUKAAAAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAQAAQAKAAAAD///wCMYSPqcvtD6OctNqLs16h+w8G2wiEpkdu55lqq9lmbxhjM1hf95dbO9oLCofEovG4KQAAIfkEBQoAAgAsBAAEACQACACh/v//zc3NAAAAAAAAAiOMjxnCAg+jBKqe5qZ+1uK9ddUHTqJCltGZpCrHXs27xob7FgAh+QQFCgADACwEAAQAOAAIAKGenp7+///Nzc0AAAACOoSPCcMjD6MUbYSLsw6qnzqFULWVmOeBYkiaJdqpq9S6GqzI89jYG57Q7Sg9XwaIEO5qRg7SoJwxjQUAIfkEBQoAAgAsGAAEACQACAChnp6ezc3NAAAAAAAAAiOEjwnCEg+jDKqe5qZ+1uK9ddUHTqJCltGZpCrHXs27xob7FgAh+QQJHgAAACwAAAAAQAAQAKAAAACenp4CMISPqcvtD6OctNqLs948+A+GAdeJpkdu55lqq9lmrxhjc1hfN5hb+9cLCofEolFTAAA7') !important;
 }
 `;
     const vk2012flat_btns = document.createElement('style');
