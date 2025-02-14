@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.2
+@version        1.5.3
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -150,6 +150,11 @@ img.name-checkmark {
 
 .completeness-gauge-gold {
 	background-color: #f6ebbb;
+}
+
+.completeness-gauge, .completeness-gauge.completeness-gauge-gold {
+	background-color: #f6ebbb;
+	width: 100%;
 }
 
 .toTop.has_down {
@@ -564,8 +569,28 @@ background-position: -108px -52px !important;
   padding-right: 5px !important;
 }
 
-.tippy-box[data-animation=shift-toward][data-state=hidden]{opacity:0}.tippy-box[data-animation=shift-toward][data-state=hidden][data-placement^=top]{transform:translateY(-10px)}.tippy-box[data-animation=shift-toward][data-state=hidden][data-placement^=bottom]{transform:translateY(10px)}.tippy-box[data-animation=shift-toward][data-state=hidden][data-placement^=left]{transform:translateX(-10px)}.tippy-box[data-animation=shift-toward][data-state=hidden][data-placement^=right]{transform:translateX(10px)}
-.tippy-box[data-animation=shift-away][data-state=hidden]{opacity:0}.tippy-box[data-animation=shift-away][data-state=hidden][data-placement^=top]{transform:translateY(10px)}.tippy-box[data-animation=shift-away][data-state=hidden][data-placement^=bottom]{transform:translateY(-10px)}.tippy-box[data-animation=shift-away][data-state=hidden][data-placement^=left]{transform:translateX(10px)}.tippy-box[data-animation=shift-away][data-state=hidden][data-placement^=right]{transform:translateX(-10px)}
+@keyframes vkAppear {
+    from {opacity: 0;
+        transform: translateY(-10px);}
+    to {opacity: 1;
+        transform: translateY(0);}
+}
+@keyframes vkFadeout {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+.tippy-box[data-animation=shift-away] {
+    will-change: opacity, transform;
+}
+.tippy-box[data-animation=shift-away][data-state=visible] {
+    animation: vkAppear 0.2s ease-out forwards;
+}
+.tippy-box[data-animation=shift-away][data-state=hidden] {
+    animation: vkFadeout 0.2s ease-out forwards;
+    transform: translateY(0);
+}
+
 
 .headerMusicBtn {
   background-position: -96px 0 !important;
@@ -597,5 +622,15 @@ background-position: -108px -52px !important;
 
 .bigPlayer .playButtons .playButton:hover {
   background-position: -48px -25px !important;
+}
+.edit_link {
+  display: none;
+}
+body, h4 {
+  font-family: tahoma, arial, verdana, sans-serif, Lucida Sans !important;
+  font-size: 11px;
+}
+.profile-hints {
+  width: 194px;
 }
 }
