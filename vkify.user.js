@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.7.2
+// @version      1.9.7.3
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -518,8 +518,27 @@ var scrobbleTimeout;
   background: none !important;
 }
 
-.header_navigation #search_box #search_box_fr form, .header_navigation #search_box #search_box_fr #search_and_one_more_wrapper {
-  margin-left: -129px !important;
+.page_header.search_expanded #search_and_one_more_wrapper {
+  position: unset !important;
+  margin-left: unset !important;
+}
+
+.page_header #search_and_one_more_wrapper {
+  left: -62px !important;
+  position: relative !important;
+  margin-left: unset !important;
+}
+
+.page_header .header_navigation #search_box {
+  float: left;
+  position: absolute;
+  left: 48%;
+}
+
+.page_header.search_expanded .header_navigation #search_box {
+  float: unset !important;
+  position: unset !important;
+  left: unset !important;
 }
 
 input[class="button"] {
@@ -629,16 +648,14 @@ input[class="button"] {
 .page_yellowheader span {
   color: #AAB7C5 !important;
 }
-.completeness-gauge-gold {
+.completeness-gauge, .completeness-gauge-gold {
   background-color: #F7F7F7 !important;
-}
-.completeness-gauge-gold {
   border-top: 1px solid #C6CBD1 !important;
 }
-.completeness-gauge.completeness-gauge-gold span {
-  color: #8F9BA9 !important;
+.completeness-gauge.completeness-gauge-gold span, .completeness-gauge span {
+  color: #2B587A !important;
 }
-.completeness-gauge-gold>div {
+.completeness-gauge-gold>div, .completeness-gauge>div {
   background-color: #C6CBD1 !important;
 }
 input[type="text"], input[type="password"], input[type~="text"], input[type~="password"], input[type="email"], input[type="phone"], input[type~="email"], input[type~="phone"], input[type="search"], select {
