@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.7.3
+// @version      1.9.7.4
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -1439,7 +1439,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
 }
         if (enable_vk2012 == 'true') {
             var hdraudiobtn = `<div class="link" id="headerMusicLinkDiv" style="margin-right: 28px;">
-                   <div class="headerMusicBtn paused" id="headerMusicBtn"></div><a href="${lastmuslink}" style="color: #FFFFFF;">${localization.headmusic}</a></div>`
+                   <div onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" class="headerMusicBtn paused" id="headerMusicBtn"></div><a href="${lastmuslink}" style="color: #FFFFFF;">${localization.headmusic}</a></div>`
     } else {
         var hdraudiobtn = ``
     }
@@ -1574,13 +1574,24 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                 }, 0);
             } /* ладно я понял как оно работает и поэтому я в целом убрал время ОЖИДания */
                                                                                                                   })
+            if (document.querySelectorAll(".playButton.musicIcon").length > 0) {
+            document.querySelectorAll(".playButton.musicIcon").forEach(obj => {
+                console.log(obj)
+                obj.onmousedown = function() {
+                    this.classList.add("pressed");
+                };
+                obj.onmouseup = function() {
+                    this.classList.remove("pressed");
+                };
+            })
+            }
             const hdrmusbtn = document.querySelector('#headerMusicBtn');
             tippy(hdrmusbtn, {
                 content: `
 <div class="bigPlayer ctx_place">
     <div class="bigPlayerWrapper">
         <div class="playButtons">
-            <div class="playButton musicIcon" data-tip="simple" data-title=`+tr('play_tip')+`></div>
+            <div onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" class="playButton musicIcon" data-tip="simple" data-title=`+tr('play_tip')+`></div>
             <div class="arrowsButtons">
                 <div class="nextButton musicIcon" data-tip="simple" data-title="?"></div>
                 <div class="backButton musicIcon" data-tip="simple" data-title="?"></div>
@@ -1745,6 +1756,17 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         vkifyEmoji();
 
         let mo = new MutationObserver(function(mutations) {
+            if (document.querySelectorAll(".playButton.musicIcon").length > 0) {
+            document.querySelectorAll(".playButton.musicIcon").forEach(obj => {
+                console.log(obj)
+                obj.onmousedown = function() {
+                    this.classList.add("pressed");
+                };
+                obj.onmouseup = function() {
+                    this.classList.remove("pressed");
+                };
+            })
+            }
             updateOnline();
             addtips();
             fiximg();
