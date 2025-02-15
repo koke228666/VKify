@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.3
+@version        1.5.4
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -112,7 +112,7 @@ img.name-checkmark {
 }
 
 .musicIcon.pressed {
-	filter: brightness(75%);
+	filter: unset;
 }
 
 /* #votesBalance,
@@ -597,6 +597,10 @@ background-position: -108px -52px !important;
 }
 
 .headerMusicBtn:hover {
+  background-position: -120px 0 !important;
+}
+
+.headerMusicBtn.pressed {
   background-position: -168px 0 !important;
 }
 
@@ -605,6 +609,10 @@ background-position: -108px -52px !important;
 }
 
 .headerMusicBtn.paused:hover {
+  background-position: -24px 0 !important;
+}
+
+.headerMusicBtn.paused.pressed {
   background-position: -72px 0 !important;
 }
 
@@ -613,6 +621,10 @@ background-position: -108px -52px !important;
 }
 
 .bigPlayer .playButtons .playButton.pause:hover {
+  background-position: -96px -25px !important;
+}
+
+.bigPlayer .playButtons .playButton.pause.pressed {
   background-position: -120px -25px !important;
 }
 
@@ -621,6 +633,10 @@ background-position: -108px -52px !important;
 }
 
 .bigPlayer .playButtons .playButton:hover {
+  background-position: -24px -25px !important;
+}
+
+.bigPlayer .playButtons .playButton.pressed {
   background-position: -48px -25px !important;
 }
 .edit_link {
