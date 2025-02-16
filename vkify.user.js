@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.8.0.2
+// @version      1.9.8.0.3
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -877,7 +877,6 @@ img[src*="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-l
   border: 1px solid #45688e !important;
 }
 .ovk-diag-body {
-height: 335px;
   padding: 0px;
   border: 1px solid #999;
   border-bottom: none;
