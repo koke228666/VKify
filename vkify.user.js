@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.8
+// @version      1.9.8.0.1
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -89,7 +89,8 @@
     "vkifystar_like": "Использовать звёздочку вместо кнопки лайка",
     "vkifyonline": "Показывать онлайн (сайта в целом) в строке поиска",
     "vkifyonlinefr": "Показывать онлайн только друзей",
-    "vkifyonlinefrpopup": "Для работы необходимо включить показ онлайна"
+    "vkifyonlinefrpopup": "Для работы необходимо включить показ онлайна",
+    "vkifyliketext": "Мне нравится"
 }`;
     window.vkifyloadLocalization = function loadLocalization(loccode) {
         if (loccode == 'ru-RU') {
@@ -975,7 +976,7 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
                 const heart = button.querySelector('.heart');
                 if (heart) {
                     if (!button.querySelector('#liketext')) {
-                        heart.parentNode.insertAdjacentHTML('afterbegin', `<div id="liketext" style="padding-left: 5px;">Мне нравится </div>`);
+                        heart.parentNode.insertAdjacentHTML('afterbegin', `<div id="liketext" style="padding-left: 5px;">${localization.vkifyliketext} </div>`);
                     }
                 }
             });
