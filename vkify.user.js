@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.8.0.1
+// @version      1.9.8.0.2
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -855,6 +855,42 @@ img[src*="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-l
   padding: 5px 0 0;
   border-top: 1px #ddd solid;
   width: 323px !important;
+}
+.navigation .link.edit-button:hover {
+  background: #E1E7ED !important;
+  text-decoration: none;
+  -webkit-border-radius: 2px;
+  -khtml-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  color: #67829e !important;
+}
+.ovk-diag-cont {
+  background-color: unset !important;
+}
+.ovk-diag {
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.35) !important;
+  border: unset !important;
+}
+.ovk-diag-head {
+  background-color: #597DA3 !important;
+  border: 1px solid #45688e !important;
+}
+.ovk-diag-body {
+height: 335px;
+  padding: 0px;
+  border: 1px solid #999;
+  border-bottom: none;
+  border-top: none;
+}
+.ovk-diag-action {
+  border: 1px solid #999 !important;
+  background-color: #F2F2F2 !important;
+  border-top: 1px solid #DAE1E8 !important;
+}
+body.dimmed > .dimmer {
+  background-color: #b7b7b7 !important;
+  opacity: 0.7 !important;
 }
 `;
     const vk2012flat_btns = document.createElement('style');
