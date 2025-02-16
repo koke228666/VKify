@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.7.4
+// @version      1.9.8
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -841,6 +841,20 @@ img[src*="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-l
   position: relative !important;
   content: url('data:image/gif;base64,R0lGODlhQAAQAJkCAJ6ens3Nzf///AAAACH5BAUKAAAAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAQAAQAKAAAAD///wCMYSPqcvtD6OctNqLs16h+w8G2wiEpkdu55lqq9lmbxhjM1hf95dbO9oLCofEovG4KQAAIfkEBQoAAgAsBAAEACQACACh/v//zc3NAAAAAAAAAiOMjxnCAg+jBKqe5qZ+1uK9ddUHTqJCltGZpCrHXs27xob7FgAh+QQFCgADACwEAAQAOAAIAKGenp7+///Nzc0AAAACOoSPCcMjD6MUbYSLsw6qnzqFULWVmOeBYkiaJdqpq9S6GqzI89jYG57Q7Sg9XwaIEO5qRg7SoJwxjQUAIfkEBQoAAgAsGAAEACQACAChnp6ezc3NAAAAAAAAAiOEjwnCEg+jDKqe5qZ+1uK9ddUHTqJCltGZpCrHXs27xob7FgAh+QQJHgAAACwAAAAAQAAQAKAAAACenp4CMISPqcvtD6OctNqLs948+A+GAdeJpkdu55lqq9lmrxhjc1hfN5hb+9cLCofEolFTAAA7') !important;
 }
+.repost-icon {
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAMAAACecocUAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAASUExURc7Z5qe+1XmdweDn78nY5gAAAEbyxbkAAAAGdFJOU///////ALO/pL8AAAAJcEhZcwAADsMAAA7DAcdvqGQAAAA2SURBVBhXVY1JDgAwCAJdyv+/XEKobedgJlEwcIgcjyp7Z9EXh+Fq+Py9ARhzVm23U+5fKQc2Yh0BdnHXyQ4AAAAASUVORK5CYII=') no-repeat 0 0 !important;
+  height: 11px;
+  margin: 1px 5px 0 !important;
+  width: 11px;
+}
+.page_header.search_expanded_at_all.search_expanded select[name="section"] {
+  display: none !important;
+}
+.page_content .comment::not(.page_content.overscrolled .comment) {
+  padding: 5px 0 0;
+  border-top: 1px #ddd solid;
+  width: 323px !important;
+}
 `;
     const vk2012flat_btns = document.createElement('style');
     vk2012flat_btns.type = 'text/css';
@@ -955,6 +969,18 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
             }
         })
     }
+    function liketext() {
+        if (!!document.querySelector('link[href*="microblog.css"]')) {
+            document.querySelectorAll('.post-like-button:not(.post.comment .post-like-button)').forEach(button => {
+                const heart = button.querySelector('.heart');
+                if (heart) {
+                    if (!button.querySelector('#liketext')) {
+                        heart.parentNode.insertAdjacentHTML('afterbegin', `<div id="liketext" style="padding-left: 5px;">Мне нравится </div>`);
+                    }
+                }
+            });
+        }
+    }
     if (team_ava_repl == 'true') {
         switch(String(team_ava)) {
             case "1":
@@ -981,6 +1007,7 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
             };
         }
         fiximg();
+        liketext()
         if (vkgraffiti == 'true') {
             window.initGraffiti = function(event) {
                 var msgbox = new CMessageBox({
@@ -1567,9 +1594,8 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                 setTimeout(() => {
                     const focusedElement = document.activeElement;
 
-                    // Если новый элемент с фокусом не является select или input[type="search"]
                     if (!u(focusedElement).is('#search_box form input[type="search"], #search_and_one_more_wrapper select')) {
-                        u('.page_header').removeClass('search_expanded');
+                        u('.page_header.search_expanded:not(.search_expanded_at_all)').removeClass('search_expanded');
                     }
                 }, 0);
             } /* ладно я понял как оно работает и поэтому я в целом убрал время ОЖИДания */
@@ -1772,7 +1798,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             fiximg();
             fullattachmenu();
             if (enable_vk2012) {
-
+            liketext();
                 try {
                     const muslnk = document.querySelector("#headerMusicLinkDiv a");
                     const audioData = localStorage.getItem("audio.lastDump");
