@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.4
+@version        1.5.5
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -321,29 +321,6 @@ body.scrolled .toTop:hover,
   font-weight: bold;
   color: #7295b2;
   font-size: 11px;
-}
-
-.like_wrap {
-  background: #FFF;
-  color: #2F5879;
-  font-size: 10px;
-  cursor: pointer;
-  padding: 5px 6px;
-  margin-top: -1px;
-  white-space: nowrap;
-  -webkit-border-radius: 3px;
-  -khtml-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.like_wrap:hover {
-  background: #E9EDF1 !important;
-}
-
-.heart:hover {
-  opacity: 0.4 !important;
 }
 
 #activetabs {
