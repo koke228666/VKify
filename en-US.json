@@ -60,5 +60,9 @@
 "vkifyigtracks": "Ignored track IDs:",
 "vkifyiglabel": "Tracks with any attribute in this field will not be scrobbled. Each value must be separated by a comma and a space (Alo Sounds, OpenVK)",
 "vkifycurrentlyplaying": "Now playing: "
-
+"vkifystar_like": "Use star instead heart in the like button",
+"vkifyonline": "Show online (site-wide) in the search bar",
+"vkifyonlinefr": "Show only friends online",
+"vkifyonlinefrpopup": "Online show must be enabled",
+"vkifyliketext": "I like that"
 }
