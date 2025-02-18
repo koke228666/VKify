@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.8.3
+// @version      1.9.8.3.1
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -2559,7 +2559,9 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
     });
 })();
 } catch (error) {
+    window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('style.stylus').forEach(el => el.textContent = '');
+    })
     console.error(error)
     window.onload = function() {
         var vkifyerr = new CMessageBox({
