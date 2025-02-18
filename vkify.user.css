@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.6
+@version        1.5.7
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -422,6 +422,7 @@ img[src*="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/applic
   height: 46px;
   border: unset !important;
   box-shadow: unset !important;
+  position: relative !important;
 }
  .tippy-content .bigPlayer .tip_result {
     width: max-content;
@@ -622,5 +623,12 @@ body, h4 {
 }
 .profile-hints {
   width: 194px;
+}
+.tippy-content .audiosContainer.audiosSideContainer.audiosPaddingContainer{
+ width: 96.5%;
+ font-size: 11px;
+ overflow: scroll;
+ max-height: 300px;
+ overflow-x: hidden;
 }
 }
