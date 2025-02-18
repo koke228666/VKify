@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.5
+@version        1.5.6
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -299,9 +299,6 @@ body.scrolled .toTop:hover,
 
 .header_navigation #search_box {
   background: none;
-}
-#ajax_audio_player {
-  display: none;	
 }
 
 .header_navigation .link {
