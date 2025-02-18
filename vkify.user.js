@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.8.2
+// @version      1.9.8.3
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -306,6 +306,105 @@ try {
         var vkifysett = `<a href="/settings?vkify" target="_blank" class="link">${localization.vkifysettingsfooter}</a>`;
     } else {
         var vkifysett = '';
+    }
+
+    function parseAudio() {
+        const audioDump = localStorage.getItem('audio.lastDump');
+        const nothingtemplate = `<div class="vkifytracksplaceholder"><center style="background: white;border: #DEDEDE solid 1px;font-size: 11px;">
+                                    <span style="color: #707070;margin: 60px 0;display: block;">
+                                        ${tr('no_data_description')}
+                                    </span>
+                                </center></div>`
+        if (audioDump) {
+            try {
+                if (JSON.parse(audioDump)) {
+                let adump = JSON.parse(audioDump);
+                adump.tracks = Array.from(new Map(JSON.parse(audioDump).tracks.map(track => [track.id, track])).values());
+                const scrollContainer = document.createElement('div');
+                scrollContainer.classList.add('scroll_container');
+                adump.tracks.forEach(track => {
+                    const scrollNode = document.createElement('div');
+                    scrollNode.classList.add('scroll_node');
+                    scrollNode.innerHTML = `
+					<div id="audioEmbed-${track.id}" data-realid="${track.id}" data-name="${track.performer} — ${track.name}" data-genre="Other" data-length="${track.length}" data-keys='${JSON.stringify(track.keys)}' data-url="${track.url}" class="audioEmbed ctx_place">
+						<audio class="audio"></audio>
+						<div id="miniplayer" class="audioEntry">
+							<div class="audioEntryWrapper" draggable="true">
+								<div class="playerButton">
+									<div class="playIcon"></div>
+								</div>
+								<div class="status">
+									<div class="mediaInfo noOverflow">
+										<div class="info">
+											<strong class="performer">
+												<a draggable="false" href="/search?section=audios&amp;order=listens&amp;only_performers=on&amp;q=${encodeURIComponent(track.performer)}">${track.performer}</a>
+											</strong>
+											—
+											<span draggable="false" class="title">${track.name}</span>
+										</div>
+									</div>
+								</div>
+								<div class="mini_timer">
+									<span class="nobold hideOnHover" data-unformatted="${track.length}">${formatTime(track.length)}</span>
+									<div class="buttons">
+										<div class="report-icon musicIcon" data-id="6690"></div>
+										<div class="remove-icon musicIcon" data-id="${track.id}"></div>
+										<div class="add-icon-group musicIcon hidden" data-id="${track.id}"></div>
+									</div>
+								</div>
+							</div>
+							<div class="subTracks" draggable="false">
+								<div class="lengthTrackWrapper">
+									<div class="track lengthTrack">
+										<div class="selectableTrack">
+											<div class="selectableTrackLoadProgress">
+												<div class="load_bar"></div>
+											</div>
+											<div class="selectableTrackSlider">
+												<div class="slider"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="volumeTrackWrapper">
+									<div class="track volumeTrack">
+										<div class="selectableTrack">
+											<div class="selectableTrackSlider">
+												<div class="slider"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				`;
+                    scrollContainer.appendChild(scrollNode);
+                });
+                if (scrollContainer.innerHTML) {
+                return `<div class="audiosContainer audiosSideContainer audiosPaddingContainer">
+                            <div class="scroll_container">
+                                ${scrollContainer.innerHTML}
+                            </div>
+                        </div>`
+                } else {
+                return nothingtemplate
+                }
+              }
+            } catch (error) {
+                console.error(error)
+                return nothingtemplate
+            }
+        } else {
+            return nothingtemplate
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        return nothingtemplate
     }
 
     var LASTFM_API_KEY = '22ca1fb2d2dbdb6a67c2bf9b3f28a03c'; //да это токены вкифу и что
@@ -980,6 +1079,10 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
     }
     function moderninfoblock() {
         if (newabout === 'true') {
+            if (Array.from(document.querySelectorAll('.content_title_expanded')).find(el =>
+        el.getAttribute('onclick') === 'hidePanel(this);' &&
+        el.textContent.trim() === tr('information')
+        )) {
         const newaboutstyle = document.createElement('style');
         newaboutstyle.type = 'text/css';
         newaboutstyle.innerHTML = `
@@ -1023,7 +1126,7 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
         showFullInfoButton.textContent = isHidden ? localization.vkifynpfullh : localization.vkifynpfulls;
         }
         });
-        }}
+        }}}
     }
     if (enable_vk2012 == 'true') {
         document.head.appendChild(vk2012style);
@@ -1292,6 +1395,9 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
                 var lastmuslink = `/audios${ovkuserid}`
             }
         };
+    window.player.__highlightActiveTrack = function() {
+        u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying')
+    }
         const originalInitEvents = window.player.initEvents;
         window.player.initEvents = function() {
             originalInitEvents.call(this);
@@ -1737,7 +1843,6 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                                                                                                   })
             if (document.querySelectorAll(".playButton.musicIcon").length > 0) {
             document.querySelectorAll(".playButton.musicIcon").forEach(obj => {
-                console.log(obj)
                 obj.onmousedown = function() {
                     this.classList.add("pressed");
                 };
@@ -1802,6 +1907,8 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         </div>
     </div>
 </div>
+<div class="vkifytracksplaceholder"></div>
+
 `,
        allowHTML: true,
        interactive: true,
@@ -1812,6 +1919,13 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
        offset: [-147, 17],
        appendTo: document.body,
        onMount(instance) {
+           const placeholder = instance.popper.querySelector('.vkifytracksplaceholder') || instance.popper.querySelector('.audiosContainer.audiosSideContainer.audiosPaddingContainer');
+           if (placeholder) {
+               const trackList = `${parseAudio()}`;
+               placeholder.outerHTML = trackList;
+           }
+           u(`.audiosContainer .audioEmbed .audioEntry, .audios_padding .audioEmbed`).removeClass('nowPlaying');
+           u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying')
            window.player.__updateFace();
            window.player.audioPlayer.onvolumechange();
        }});
@@ -1919,7 +2033,6 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         let mo = new MutationObserver(function(mutations) {
             if (document.querySelectorAll(".playButton.musicIcon").length > 0) {
             document.querySelectorAll(".playButton.musicIcon").forEach(obj => {
-                console.log(obj)
                 obj.onmousedown = function() {
                     this.classList.add("pressed");
                 };
