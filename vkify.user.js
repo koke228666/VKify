@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.8.1
+// @version      1.9.8.2
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -93,7 +93,9 @@ try {
     "vkifyliketext": "Мне нравится",
     "vkifynewabout": "Использовать новый раздел информации о пользователе",
     "vkifynpfulls": "Показать подробную информацию",
-    "vkifynpfullh": "Скрыть подробную информацию"
+    "vkifynpfullh": "Скрыть подробную информацию",
+    "vkifyajplayere": "Показывать AJAX плеер OpenVK",
+    "vkifyajplayerm": "Сделать AJAX плеер OpenVK маленьким"
 }`;
     window.vkifyloadLocalization = function loadLocalization(loccode) {
         if (loccode == 'ru-RU') {
@@ -171,6 +173,8 @@ try {
     const onlinea = localStorage.getItem('onlinea');
     const onlinefr = localStorage.getItem('onlinefr');
     const newabout = localStorage.getItem('newabout');
+    const ajplayere = localStorage.getItem('ajplayere');
+    const ajplayerm = localStorage.getItem('ajplayerm');
     if (!(firstload)) {
         localStorage.setItem('firstload', 'true')
         location.reload();
@@ -285,6 +289,12 @@ try {
     }
     if (!(newabout)) {
         localStorage.setItem('newabout', 'true');
+    }
+    if (!(ajplayere)) {
+        localStorage.setItem('ajplayere', 'true');
+    }
+    if (!(ajplayerm)) {
+        localStorage.setItem('ajplayerm', 'true');
     }
     if (proxyvkemoji == 'true') {
         var vkemojiserver = 'https://koke228.ru/vkemoji';
@@ -956,6 +966,18 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
         prbg.innerHTML = `#backdrop {display: none;}`
         document.head.appendChild(prbg);
     }
+    if (ajplayere != 'true') {
+        const ajplayerst = document.createElement('style');
+        ajplayerst.type = 'text/css';
+        ajplayerst.innerHTML = `#ajax_audio_player {display: none;}`
+        document.head.appendChild(ajplayerst);
+    }
+    if (ajplayerm === 'true') {
+        var ajplayermin = document.createElement("style");
+        ajplayermin.type = 'text/css';
+        ajplayermin.textContent = `#ajax_audio_player {width: 155px !important;}`;
+        document.head.appendChild(ajplayermin);
+    }
     function moderninfoblock() {
         if (newabout === 'true') {
         const newaboutstyle = document.createElement('style');
@@ -1071,6 +1093,27 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
             });
         }
     }
+    function minifyajplayer() {
+    if (ajplayerm === 'true') {
+        document.querySelectorAll("#aj_player_internal_controls").forEach(function (element) {
+            element.innerHTML = `
+                        <div id="aj_player_play">
+                            <div id="aj_player_play_btn" class="paused"></div>
+                        </div>
+                        <div id="aj_player_track" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;transform: translateY(-2px);">
+                            <div id="aj_player_track_name">
+                                <a id="aj_player_track_title" class="noOverflow" style="max-width: 300px;user-select: none;cursor: unset;">
+                                    <b>?</b>
+                                    <br>
+                                    <span>?</span>
+                                </a>
+                            </div>
+                        </div>
+`;
+        });
+        window.player.__updateFace();
+    }
+    }
     if (team_ava_repl == 'true') {
         switch(String(team_ava)) {
             case "1":
@@ -1099,6 +1142,7 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
         fiximg();
         liketext();
         moderninfoblock();
+        minifyajplayer();
         if (vkgraffiti == 'true') {
             window.initGraffiti = function(event) {
                 var msgbox = new CMessageBox({
@@ -1889,6 +1933,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             fiximg();
             fullattachmenu();
             moderninfoblock();
+            minifyajplayer();
             if (enable_vk2012) {
             liketext();
                 try {
@@ -2103,6 +2148,12 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                   <input type="checkbox" checked="" id="flatplayerbtns">
                   <label for="flatplayerbtns" class="nobold">${localization.vkifyflatplayerbtns}</label>
                   <br><br>
+			      <input type="checkbox" checked="" id="ajplayere">
+				  <label for="ajplayere" class="nobold">${localization.vkifyajplayere}</label>
+                  <br><br>
+			      <input type="checkbox" checked="" id="ajplayerm">
+				  <label for="ajplayerm" class="nobold">${localization.vkifyajplayerm}</label>
+                  <br><br>
                   <input type="checkbox" checked="" id="enable_scrobble">
                   <label for="enable_scrobble" class="nobold">${localization.vkifyscrobble}</label>
                   <a id="scrobble_account" onclick="authenticateLF();" style="margin-left: 25px;">${localization.vkifyaddlastfm} (${lastfm_token ?? "" !== "" ? localization.vkifylastfmtokentrue : localization.vkifylastfmtokenfalse})</a>
@@ -2285,6 +2336,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         setTip('label[for="vkify_settings"]', localization.vkifyfootersettdesc, true)
         setTip('#iglabel', localization.vkifyiglabel)
         setTip('label[for="onlinefr"]', localization.vkifyonlinefrpopup)
+        setTip('label[for="ajplayerm"]', '<img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKEAAAArCAYAAAAQeugIAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJnSURBVHhe7ZwxjupAEET/fUFCIiEgAXEZjkAAJyPwqvkqq+itwdjYjBfqSU+eqW4QQYnVJvxrjKmMS2iqc1fC4/HYrNfrZrFYWDuJ0a/oGdOWMAbqRdZOIRexLaG/Ae07jb6BtoRq0dohrlYrmWeBS2hHNQp4Op2a/X7fZnGOjPdC4BLa0Y3Snc/n25PPeQ+4hHYSo3SXy+WmKmAIXEI7iS6hrerhcPj15ziyvAdmVcJMaaby0p2zoJSDrnlQ2uH8m43S7Xa79h7nyLbb7d0emOU3IVBZoPJ8VjuBykv3rpxngZrb/242m2a5XN5l4E+UEDyaAeR5ns/P3PvkIO/YsuCjSoiMBfn8zL1PDvKOLQtcwgRmLHiUg7xjy4KXS3i9Xm+q2VABnxVqrt5HwfN8zgKVKXjPlgWjlXDMIoJ87poDtacyoGYsGJLZsmDUEr5SxEzO1a6aAzXrOx8js2XB6CV8pYj2uwSTlDBUu9aywCW01QT+c2yrCWbzj4n9PsGoJVTzvjJqPsSM2nnGV15rfwtGK6Ga9TV/jnwfan6ffLd1BC+XcCxLnwF5Ju8Aznn+KGPyDsBdPdWu7Rb8qRL2yZ/N8OzK8yzIeeluteAjSpjhPd5VmYLz0mtynuG51YKP+yZUqh1keJYEOPOTd/hunxPMpoRh/hx85zPf8cz5o4zvfFZ3zvIzz0t3qwWzKmHI5Lx0Z3hHzYNH866MnyyTZ1YLZldC+z0Cl9BWE7iEtprAJbTVBC6hrSZwCW01QVtC/1Krfafyl1r9m9X2ncrfrA5i4G9EO6XRLy5gcFdCY2rgEprKNM0PNSvlUsahX+oAAAAASUVORK5CYII="/>')
         function saveSettings() {
             localStorage.setItem('enable_vkify_settings', document.getElementById('vkify_settings').checked);
             localStorage.setItem('vk2012', document.getElementById('vk2012').checked);
@@ -2316,6 +2368,8 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             localStorage.setItem('onlinea', document.getElementById('onlinea').checked);
             localStorage.setItem('onlinefr', document.getElementById('onlinefr').checked);
             localStorage.setItem('newabout', document.getElementById('newabout').checked);
+            localStorage.setItem('ajplayere', document.getElementById('ajplayere').checked);
+            localStorage.setItem('ajplayerm', document.getElementById('ajplayerm').checked);
 
             NewNotification('VKify', localization.vkifysaved, popupimg, () => {}, 5000, false);
             document.querySelector('#ajloader').style = "display: unset;"
@@ -2346,6 +2400,8 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         document.getElementById('onlinea').checked = (/true/).test(localStorage.getItem('onlinea'));
         document.getElementById('onlinefr').checked = (/true/).test(localStorage.getItem('onlinefr'));
         document.getElementById('newabout').checked = (/true/).test(localStorage.getItem('newabout'));
+        document.getElementById('ajplayere').checked = (/true/).test(localStorage.getItem('ajplayere'));
+        document.getElementById('ajplayerm').checked = (/true/).test(localStorage.getItem('ajplayerm'));
         const headradios = document.querySelectorAll(`input[type="radio"][name="vk2012head"]`);
         headradios.forEach(radio => {
             if (radio.value === localStorage.getItem('vk2012_header_type')) {
