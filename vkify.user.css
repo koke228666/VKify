@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.7
+@version        1.5.8
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -50,8 +50,7 @@
 }
 
 .audioEntry.nowPlaying:hover {
-	background: #4D6782 !important;
-	border-radius: inherit !important;
+	background: #5f7d9d !important;
 }
 
 .audioEntry .performer a {
@@ -415,13 +414,13 @@ img[src*="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/applic
   font-weight: normal;
   font-size: 11px !important;
   margin-left: -9px;
-  margin-top: 0px;
+  margin-top: -5px;
   margin-right: 0px;
   width: 520px;
-  background-color: unset !important;
+  background-color: rgb(240, 241, 242);
   height: 46px;
   border: unset !important;
-  box-shadow: unset !important;
+  box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.05), 0 1px 4px -1px rgba(0, 0, 0, 0.35);
   position: relative !important;
 }
  .tippy-content .bigPlayer .tip_result {
@@ -627,8 +626,19 @@ body, h4 {
 .tippy-content .audiosContainer.audiosSideContainer.audiosPaddingContainer{
  width: 96.5%;
  font-size: 11px;
- overflow: scroll;
+ overflow-y: auto;
  max-height: 300px;
- overflow-x: hidden;
+}
+.bigPlayer .playButtons .nextButton, .bigPlayer .playButtons .backButton {
+  opacity: 0.83;
+  transition: opacity 100ms ease-out;
+}
+.bigPlayer .playButtons .nextButton:hover, .bigPlayer .playButtons .backButton:hover {
+  opacity: 1;
+}
+.mini_timer .nobold {
+  text-align: center;
+  min-width: 28px;
+  font-size: 0.9em;
 }
 }
