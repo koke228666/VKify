@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.8.3.1
+// @version      1.9.8.3.2
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -310,7 +310,7 @@ try {
 
     function parseAudio() {
         const audioDump = localStorage.getItem('audio.lastDump');
-        const nothingtemplate = `<div class="vkifytracksplaceholder"><center style="background: white;border: #DEDEDE solid 1px;font-size: 11px;">
+        const nothingtemplate = `<div class="vkifytracksplaceholder"><center style="background: white;border: #DEDEDE solid 1px;font-size: 11px;margin-top: 9px;margin-bottom: 3px;">
                                     <span style="color: #707070;margin: 60px 0;display: block;">
                                         ${tr('no_data_description')}
                                     </span>
@@ -1790,7 +1790,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                     <form id="search_form" action="/search" method="get">
                                         <div id="search_and_one_more_wrapper">
                                             <input autocomplete="off" type="search" maxlength="79" name="q" placeholder="${tr("header_search")}" title="${tr("header_search")} [Alt+Shift+F]" accesskey="f">
-                                            ${enable_vk2012 == 'true' && onlinea == 'true' ? `<a class="friendslink" href="/friends${ovkuserid}" style="transform: translateX(-42px);width: 43px;"><div class="friends_online">0</div></a>` : ``}
+                                            ${enable_vk2012 == 'true' && onlinea == 'true' ? `<a class="friendslink" href="/friends${ovkuserid}?act=online" style="transform: translateX(-42px);width: 43px;"><div class="friends_online">0</div></a>` : ``}
                                             <select name="section">
                                                 <option value="users">${tr("s_by_people")}</option>
                                                 <option value="groups">${tr("s_by_groups")}</option>
@@ -1928,6 +1928,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
            u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying')
            window.player.__updateFace();
            window.player.audioPlayer.onvolumechange();
+           instance.popper.querySelector('.audiosContainer.audiosSideContainer.audiosPaddingContainer').querySelector('.audioEntry.nowPlaying')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
        }});
         };
         /* опенвк не существует, очень сырая функция, не советую */
