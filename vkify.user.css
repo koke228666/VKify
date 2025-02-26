@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.8
+@version        1.5.8.1
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -640,5 +640,14 @@ body, h4 {
   text-align: center;
   min-width: 28px;
   font-size: 0.9em;
+}
+.docGalleryItem img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+.client_app.client_app_titlebar > img {
+ filter: none;
 }
 }
