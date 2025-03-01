@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.8.1
+@version        1.5.8.2
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -649,5 +649,30 @@ body, h4 {
 }
 .client_app.client_app_titlebar > img {
  filter: none;
+}
+.paginator.paginator-at-top.tidy {
+  display:none;
+}
+.post-horizontal .upload-item .play-button, .compact_video .play-button, .docGalleryItem .play-button {
+  position: absolute;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+  width: 47px;
+  height: 46px;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.38);
+  transition: background 100ms linear;
+}
+.post-horizontal .upload-item .play-button:hover, .compact_video .play-button:hover, .docGalleryItem .play-button:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.post-horizontal .upload-item .play-button .play-button-ico, .compact_video .play-button .play-button-ico, .docGalleryItem .play-button .play-button-ico {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAWCAQAAACMYb/JAAAAq0lEQVQoFYXBLw8BcQDH4a/NZgSKYiJdlkxQvQIvgLfgFUg0wTRNFryCK4pokkkmmKH4+7Hb7Xbn7vc7zyO6XJhQkh0Oris9UjLjiG9JWSbcCJzoKI6oOUX9Iu5AW2GYTcnLh82OpjzYvRmRlUSyDVXxz0r8sxHJztRFEoeKJGzu9EnLhdmamnzEvRiQUYCoLXX9IuzDmJyieOLb05IJBzwzCjJjyIMFDVl9Aat3128pqvmlAAAAAElFTkSuQmCC") no-repeat;
+  display: inline-block;
+  width: 17px;
+  height: 22px;
+  margin-left: 2px;
 }
 }
