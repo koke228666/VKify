@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.8.3.2
+// @version      1.9.9
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -95,7 +95,8 @@ try {
     "vkifynpfulls": "Показать подробную информацию",
     "vkifynpfullh": "Скрыть подробную информацию",
     "vkifyajplayere": "Показывать AJAX плеер OpenVK",
-    "vkifyajplayerm": "Сделать AJAX плеер OpenVK маленьким"
+    "vkifyajplayerm": "Сделать AJAX плеер OpenVK маленьким",
+    "vkifyajplayerstat": "Сделать AJAX плеер OpenVK статичным"
 }`;
     window.vkifyloadLocalization = function loadLocalization(loccode) {
         if (loccode == 'ru-RU') {
@@ -175,6 +176,7 @@ try {
     const newabout = localStorage.getItem('newabout');
     const ajplayere = localStorage.getItem('ajplayere');
     const ajplayerm = localStorage.getItem('ajplayerm');
+    const ajplayerstat = localStorage.getItem('ajplayerstat');
     if (!(firstload)) {
         localStorage.setItem('firstload', 'true')
         location.reload();
@@ -295,6 +297,9 @@ try {
     }
     if (!(ajplayerm)) {
         localStorage.setItem('ajplayerm', 'true');
+    }
+    if (!(ajplayerstat)) {
+        localStorage.setItem('ajplayerstat', 'true');
     }
     if (proxyvkemoji == 'true') {
         var vkemojiserver = 'https://koke228.ru/vkemoji';
@@ -759,7 +764,7 @@ input[class="button"] {
   border-right: solid 1px #e9edf1 !important;
   border-left: solid 1px #e9edf1 !important;
   border-bottom: solid 1px #e9edf1 !important;
-  color: #2b587a !important;
+  color: #607387 !important;
   overflow: hidden !important;
 }
 .page_yellowheader span {
@@ -1007,6 +1012,99 @@ body.dimmed > .dimmer {
   background-color: #b7b7b7 !important;
   opacity: 0.7 !important;
 }
+.repeatButton.musicIcon {
+  background-position: unset !important;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAOCAYAAAD0f5bSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACSSURBVChTY/j//z9BHFA0CUgh+EwMRILA4sn/oUwGRqApPkB6NhBLgEUIgPW9uYwgmxYAMVEaYIAFiIUhTAZboClHoGwUAHMayBYQDfcTLg0wANMAMoCogEDWAKKJDj1kANaEbhIhwESsBqC8NZTJwAiKYWJtgIJHpPrpORCng20CAZhtMOfiA8jxRFAxBDAwAADevVg6HNHJRgAAAABJRU5ErkJggg==") !important;
+}
+.additionalButtons .musicIcon {
+  filter: unset;
+  transition: opacity 100ms ease-out !important;
+  opacity: 0.70;
+}
+.additionalButtons .repeatButton.musicIcon.pressed {
+  opacity: 1;
+}
+.additionalButtons .deviceButton.musicIcon.pressed {
+  opacity: 1;
+}
+.button {
+  padding: 5px 7px 4px;
+  border-top: 1px solid #517295;
+  border-bottom: 1px solid #4e6f93;
+  border-left: 1px solid #4e6f93;
+  border-right: 1px solid #4e6f93;
+  padding-top: 5px;
+  padding-bottom: 4px;
+  text-shadow: 0 1px 0 #45688e;
+  max-height: 25px !important;
+}
+#act_tab_a {
+  padding: 5px 10px;
+  margin: -5px -10px;
+}
+.tab a#ki {
+  padding: 5px 10px;
+  margin: -5px -10px;
+}
+.tabs {
+  user-select: none;
+  user-drag: none;
+  -webkit-user-drag: none;
+  -moz-user-select: none;
+}
+#ajax_audio_player {
+  color: #66819e !important;
+  background-color: #d9e0e8 !important;
+  opacity: 0.70;
+  transition: opacity 200ms ease-out, background-color 200ms ease-out, top 150ms ease-out, left 150ms ease-out, bottom 150ms ease-out, right 150ms ease-out !important;
+  border-radius: 3px !important;
+  -moz-border-radius: 3px !important;
+  -webkit-border-radius: 3px !important;
+  -khtml-border-radius: 3px !important;
+}
+#aj_player_track_name * {
+  color: #66819e !important;
+}
+.ui-draggable-dragging #aj_player_track_name * {
+  color: #567392 !important;
+}
+#ajax_audio_player.ui-draggable-dragging {
+  opacity: 1;
+}
+#ajax_audio_player:hover {
+  opacity: 1;
+}
+#ajax_audio_player #aj_player_play #aj_player_play_btn.paused {
+  background-position: -243px -28px;
+}
+#ajax_audio_player #aj_player_play #aj_player_play_btn {
+  background-position: -222px -28px;
+}
+#ajax_audio_player #aj_player_close_btn {
+  transition: opacity 200ms ease-out;
+}
+.header_navigation .link > a {
+  color: #dae1e8;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 15px 3px;
+  margin: -15px 0px;
+}
+.header_navigation .link > a:hover {
+  text-decoration: none !important;
+}
+.header_navigation .link:hover:not(.link.header_divider_stick) {
+  background-color: rgba(0, 31, 64, 0.17) !important;
+}
+.header_navigation .link {
+  height: 30px !important;
+}
+.page_header #search_box input[type="search"] {
+  height: 22px !important;
+}
+.header_navigation #search_box select[name="section"] {
+  height: 22px !important;
+}
 `;
     const vk2012flat_btns = document.createElement('style');
     vk2012flat_btns.type = 'text/css';
@@ -1077,6 +1175,7 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
         ajplayermin.textContent = `#ajax_audio_player {width: 155px !important;}`;
         document.head.appendChild(ajplayermin);
     }
+
     function moderninfoblock() {
         if (newabout === 'true') {
             if (Array.from(document.querySelectorAll('.content_title_expanded')).find(el =>
@@ -1196,8 +1295,8 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
             });
         }
     }
-    function minifyajplayer() {
-    if (ajplayerm === 'true') {
+    function minifyajplayer(mforce = false) {
+    if (ajplayerm === 'true' || mforce) {
         document.querySelectorAll("#aj_player_internal_controls").forEach(function (element) {
             element.innerHTML = `
                         <div id="aj_player_play">
@@ -1246,6 +1345,57 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
         liketext();
         moderninfoblock();
         minifyajplayer();
+        if (ajplayerstat === 'true') {
+            const ajplayermin = document.createElement("style");
+            ajplayermin.type = 'text/css';
+            ajplayermin.textContent = `#ajax_audio_player {width: 155px !important;}
+            #ajax_audio_player #aj_player_close_btn {opacity: 0;}
+            #ajax_audio_player:hover #aj_player_close_btn {opacity: 0.6;}
+            #ajax_audio_player:hover #aj_player_close_btn:hover {opacity: 1;}`;
+            document.head.appendChild(ajplayermin);
+            const ajplayerscr = document.createElement("style");
+            ajplayerscr.type = 'text/css';
+            ajplayerscr.textContent = `.scrolled #ajax_audio_player {top: 15px !important;}`;
+            document.head.appendChild(ajplayerscr);
+            function stataj() {
+                minifyajplayer(true);
+                function statAjPlayer() {
+                    const header = document.querySelector('.page_header');
+                    const ajPlayer = document.getElementById('ajax_audio_player');
+                    const headerRect = header.getBoundingClientRect();
+                    const headerBottomRightX = headerRect.right;
+                    if (document.documentElement.clientWidth - header.getBoundingClientRect().right < 170) {
+                        document.querySelector('#ajax_audio_player').style = `left: ${headerBottomRightX - 815}px;top: ${document.documentElement.clientHeight - 50}px;`;
+                        ajplayerscr.textContent = `.scrolled #ajax_audio_player {top: ${document.documentElement.clientHeight - 50}px !important;}`;
+                        localStorage.setItem('audio.lastX', headerBottomRightX - 815);
+                    } else {
+                        document.querySelector('#ajax_audio_player').style = `left: ${headerBottomRightX + 2}px;top: 49px;`;
+                        ajplayerscr.textContent = `.scrolled #ajax_audio_player {top: 15px !important;}`;
+                        localStorage.setItem('audio.lastX', headerBottomRightX + 2);
+                    }
+                }
+                statAjPlayer();
+                window.addEventListener('load', statAjPlayer);
+                window.addEventListener('resize', statAjPlayer);
+                $('#ajax_audio_player').draggable("destroy")
+            }
+            if (document.getElementById('ajax_audio_player')) {
+                stataj();
+            } else {
+                const observer = new MutationObserver((mutationsList, observer) => {
+                    const element = document.querySelector('#ajax_audio_player');
+                    if (element) {
+                        stataj();
+                        observer.disconnect();
+                    }
+                });
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true,
+                });
+            }
+        }
         if (vkgraffiti == 'true') {
             window.initGraffiti = function(event) {
                 var msgbox = new CMessageBox({
@@ -1706,7 +1856,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
     }, null, 'arrayChange');
 }
         if (enable_vk2012 == 'true') {
-            var hdraudiobtn = `<div class="link" id="headerMusicLinkDiv" style="margin-right: 28px;">
+            var hdraudiobtn = `<div class="link" id="headerMusicLinkDiv" style="padding-right: 35px;">
                    <div onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" class="headerMusicBtn paused" id="headerMusicBtn"></div><a href="${lastmuslink}" style="color: #FFFFFF;">${localization.headmusic}</a></div>`
     } else {
         var hdraudiobtn = ``
@@ -1790,7 +1940,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                     <form id="search_form" action="/search" method="get">
                                         <div id="search_and_one_more_wrapper">
                                             <input autocomplete="off" type="search" maxlength="79" name="q" placeholder="${tr("header_search")}" title="${tr("header_search")} [Alt+Shift+F]" accesskey="f">
-                                            ${enable_vk2012 == 'true' && onlinea == 'true' ? `<a class="friendslink" href="/friends${ovkuserid}?act=online" style="transform: translateX(-42px);width: 43px;"><div class="friends_online">0</div></a>` : ``}
+                                            ${enable_vk2012 == 'true' && onlinea == 'true' ? `<a class="friendslink" href="/friends${ovkuserid}?act=online" style="transform: translateX(-42px) translateY(1px);width: 43px;"><div class="friends_online">0</div></a>` : ``}
                                             <select name="section">
                                                 <option value="users">${tr("s_by_people")}</option>
                                                 <option value="groups">${tr("s_by_groups")}</option>
@@ -1971,22 +2121,24 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         const footer = document.querySelectorAll('.page_footer');
         footer[0].innerHTML = vkfooter;
             async function updateOnline() {
-                if (onlinea == 'true') {
-                    if (onlinefr == 'true') {
-                        const friendson = (await window.OVKAPI.call("friends.get", {"user_id": window.openvk.current_id, "count": 99999})).items.filter(user => user.online === 1).length
-                        if (Number(friendson) > 99) {
-                            document.querySelector('.friends_online').textContent = "99+"
+                if (enable_vk2012 == 'true'){
+                    if (onlinea == 'true') {
+                        if (onlinefr == 'true') {
+                            const friendson = (await window.OVKAPI.call("friends.get", {"user_id": window.openvk.current_id, "count": 99999})).items.filter(user => user.online === 1).length
+                            if (Number(friendson) > 99) {
+                                document.querySelector('.friends_online').textContent = "99+"
+                            } else {
+                                document.querySelector('.friends_online').textContent = friendson
+                            }
                         } else {
-                            document.querySelector('.friends_online').textContent = friendson
+                            const friendson = (await window.OVKAPI.call("ovk.aboutInstance", {"fields": "statistics"})).statistics.online_users_count
+                            if (Number(friendson) > 99) {
+                                document.querySelector('.friends_online').textContent = "99+"
+                            } else {
+                                document.querySelector('.friends_online').textContent = friendson
+                            }
                         }
-                    } else {
-                        const friendson = (await window.OVKAPI.call("ovk.aboutInstance", {"fields": "statistics"})).statistics.online_users_count
-                        if (Number(friendson) > 99) {
-                            document.querySelector('.friends_online').textContent = "99+"
-                        } else {
-                            document.querySelector('.friends_online').textContent = friendson
-                        }
-                           }
+                    }
                 }
             }
            updateOnline();
@@ -2268,6 +2420,9 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
 			      <input type="checkbox" checked="" id="ajplayerm">
 				  <label for="ajplayerm" class="nobold">${localization.vkifyajplayerm}</label>
                   <br><br>
+			      <input type="checkbox" checked="" id="ajplayerstat">
+				  <label for="ajplayerstat" class="nobold">${localization.vkifyajplayerstat}</label>
+                  <br><br>
                   <input type="checkbox" checked="" id="enable_scrobble">
                   <label for="enable_scrobble" class="nobold">${localization.vkifyscrobble}</label>
                   <a id="scrobble_account" onclick="authenticateLF();" style="margin-left: 25px;">${localization.vkifyaddlastfm} (${lastfm_token ?? "" !== "" ? localization.vkifylastfmtokentrue : localization.vkifylastfmtokenfalse})</a>
@@ -2450,7 +2605,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         setTip('label[for="vkify_settings"]', localization.vkifyfootersettdesc, true)
         setTip('#iglabel', localization.vkifyiglabel)
         setTip('label[for="onlinefr"]', localization.vkifyonlinefrpopup)
-        setTip('label[for="ajplayerm"]', '<img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKEAAAArCAYAAAAQeugIAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJnSURBVHhe7ZwxjupAEET/fUFCIiEgAXEZjkAAJyPwqvkqq+itwdjYjBfqSU+eqW4QQYnVJvxrjKmMS2iqc1fC4/HYrNfrZrFYWDuJ0a/oGdOWMAbqRdZOIRexLaG/Ae07jb6BtoRq0dohrlYrmWeBS2hHNQp4Op2a/X7fZnGOjPdC4BLa0Y3Snc/n25PPeQ+4hHYSo3SXy+WmKmAIXEI7iS6hrerhcPj15ziyvAdmVcJMaaby0p2zoJSDrnlQ2uH8m43S7Xa79h7nyLbb7d0emOU3IVBZoPJ8VjuBykv3rpxngZrb/242m2a5XN5l4E+UEDyaAeR5ns/P3PvkIO/YsuCjSoiMBfn8zL1PDvKOLQtcwgRmLHiUg7xjy4KXS3i9Xm+q2VABnxVqrt5HwfN8zgKVKXjPlgWjlXDMIoJ87poDtacyoGYsGJLZsmDUEr5SxEzO1a6aAzXrOx8js2XB6CV8pYj2uwSTlDBUu9aywCW01QT+c2yrCWbzj4n9PsGoJVTzvjJqPsSM2nnGV15rfwtGK6Ga9TV/jnwfan6ffLd1BC+XcCxLnwF5Ju8Aznn+KGPyDsBdPdWu7Rb8qRL2yZ/N8OzK8yzIeeluteAjSpjhPd5VmYLz0mtynuG51YKP+yZUqh1keJYEOPOTd/hunxPMpoRh/hx85zPf8cz5o4zvfFZ3zvIzz0t3qwWzKmHI5Lx0Z3hHzYNH866MnyyTZ1YLZldC+z0Cl9BWE7iEtprAJbTVBC6hrSZwCW01QVtC/1Krfafyl1r9m9X2ncrfrA5i4G9EO6XRLy5gcFdCY2rgEprKNM0PNSvlUsahX+oAAAAASUVORK5CYII="/>')
+        setTip('label[for="ajplayerm"]', '<img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKUAAAAvCAYAAACCAApkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMwSURBVHhe7ZxNbhQxFIQ5KivOAStgwxESFhwBkLgDYgUEBIiAxE8WbLhAwxvpoUdN2W33tLuduEr6NPar8tDqLiUZFnNrkqTOpFJK3UmllLqTSil1J1rKq1+/pw9fr6b3lz+FaIL1y3rGdFRKC7I3EaIFrJhHpdRPSLEl1jfUUSnZQSGWcPH5R9EMpVKKJlj5Hj15Mb26+PJvZmubYTFRKqVohpXw4fnzw2tcYw6lUoqmWAnvnz09wAppoFRK0ZQhSnnn3tkB5olytriPL99eTg/Onx3KaNjaZphDdVtKv2l447a4mTlS18WI2dIzW9H6euzDzKGQ78IHnb9rm73++O2/LEqlrCD+2yXXgZmSM1uxxbWw//558+n70QzVZSnjDcOb5/uIe8zH+dwe55Ho5XIOZlL71HxuPzePXomfyrHMmqCubSlrs0s9xL2SfMxiJrff2stRmjsF1GqlvH338QHm1RJvBN6U3D7nxf3c3HEfc2wdc07M4N7XCGZTc7Zf6iHuRVhuLVCrl/LUYrIb4kQf83Ne3Kfmvk9Rey6XRw9xH3O5/VIvUppbE1STUp5STHYT4gz9Uq92xqg9i17co8dgGZzF/VIvUppbE1SzUi4tJrsJcebrCMsyL/qpeQQzLBdnc1nMlPpxFufol+4j7kVyuZJ1LaimpTRYVsyDZbjJoJqX0mB5kUelDGKHSmBldFheCAelX99id1DdfdDJMcqvs9FANSsly9TA/qZqUcrcezKvxTWMDqpJKZlfiz18LECLQuTek3ktrmF0UKuXknm1xAfP1vbqxL3nWCY1xz1mczN2Fmfos8zooFYr5ZrEh8XWNX5unpo55jHcwyzO2Tp1bmRQw5Uy5TGYF99rbs7W9op4ZlRQ3ZWSPTTDvfiaWsdZap/KRpiXOsfmbI3nxDUpZWrGHixbxxnbxxnznJpzbM7WqXMjg7qRpfS1k5vFeZz5PDfzczgrWTs+GxlUl39TirFAqZRid1AqpdgdlEopdgelUordQamUYndQR6XUN/mKLSn6Jl9957nYkqLvPDdZUD8xRUusX6yQJlpKSdpTKqXUnVRKqTuplFJnmqY/ZriiecdKyJUAAAAASUVORK5CYII="/>')
         function saveSettings() {
             localStorage.setItem('enable_vkify_settings', document.getElementById('vkify_settings').checked);
             localStorage.setItem('vk2012', document.getElementById('vk2012').checked);
@@ -2484,6 +2639,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             localStorage.setItem('newabout', document.getElementById('newabout').checked);
             localStorage.setItem('ajplayere', document.getElementById('ajplayere').checked);
             localStorage.setItem('ajplayerm', document.getElementById('ajplayerm').checked);
+            localStorage.setItem('ajplayerstat', document.getElementById('ajplayerstat').checked);
 
             NewNotification('VKify', localization.vkifysaved, popupimg, () => {}, 5000, false);
             document.querySelector('#ajloader').style = "display: unset;"
@@ -2516,6 +2672,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         document.getElementById('newabout').checked = (/true/).test(localStorage.getItem('newabout'));
         document.getElementById('ajplayere').checked = (/true/).test(localStorage.getItem('ajplayere'));
         document.getElementById('ajplayerm').checked = (/true/).test(localStorage.getItem('ajplayerm'));
+        document.getElementById('ajplayerstat').checked = (/true/).test(localStorage.getItem('ajplayerstat'));
         const headradios = document.querySelectorAll(`input[type="radio"][name="vk2012head"]`);
         headradios.forEach(radio => {
             if (radio.value === localStorage.getItem('vk2012_header_type')) {
