@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.8.3
+@version        1.5.8.4
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -680,5 +680,16 @@ body, h4 {
 }
 .like_wrap {
   margin-bottom: 6px;
+}
+.button {
+  padding: 5px 7px 4px;
+  border-top: 1px solid #517295;
+  border-bottom: 1px solid #4e6f93;
+  border-left: 1px solid #4e6f93;
+  border-right: 1px solid #4e6f93;
+  padding-top: 5px;
+  padding-bottom: 4px;
+  text-shadow: 0 1px 0 #45688e;
+  max-height: 25px !important;
 }
 }
