@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.8.4
+@version        1.5.7
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -658,8 +658,6 @@ body, h4 {
 }
 .post-horizontal .upload-item .play-button, .compact_video .play-button, .docGalleryItem .play-button {
   position: absolute;
-  height: 30px;
-  width: 30px;
   display: flex;
   justify-content: center;
   width: 47px;
@@ -681,15 +679,35 @@ body, h4 {
 .like_wrap {
   margin-bottom: 6px;
 }
-.button {
-  padding: 5px 7px 4px;
-  border-top: 1px solid #517295;
-  border-bottom: 1px solid #4e6f93;
-  border-left: 1px solid #4e6f93;
-  border-right: 1px solid #4e6f93;
-  padding-top: 5px;
-  padding-bottom: 4px;
-  text-shadow: 0 1px 0 #45688e;
-  max-height: 25px !important;
+.link:hover .headerMusicBtn.paused {
+  background-position: -24px 0 !important;
+}
+.link:hover .headerMusicBtn {
+  background-position: -120px 0;
+}
+.link:hover .headerMusicBtn.paused {
+  background-position: -24px 0 !important;
+}
+.link:hover .headerMusicBtn {
+  background-position: -120px 0 !important;
+}
+textarea {
+  background: #FFFFFF;
+  color: black;
+  border: 1px solid #C0CAD5;
+  width: 328px;
+  min-height: 40px;
+  padding: 3px 25px 3px 3px;
+    padding-bottom: 3px;
+  padding-bottom: 5px;
+  margin-bottom: 3px;
+  outline: 0;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  line-height: 150%;
+  word-wrap: break-word;
+  cursor: text;
 }
 }
+
