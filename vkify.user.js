@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.9
+// @version      1.9.9.1
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -687,7 +687,7 @@ input[class="button"] {
 
 .button {
   border-radius: 2px;
- border-top: 1px solid #517295;
+  border-top: 1px solid #517295;
   border-bottom: 1px solid #4e6f93;
   border-left: 1px solid #4e6f93;
   border-right: 1px solid #4e6f93;;
@@ -701,6 +701,7 @@ input[class="button"] {
   text-shadow: 0 1px 0 #597da3;
   cursor: pointer;
   text-decoration: none;
+  padding-bottom: 5px !important;
 }
 
 .navigation .link {
@@ -771,14 +772,16 @@ input[class="button"] {
   color: #AAB7C5 !important;
 }
 .completeness-gauge, .completeness-gauge-gold {
-  background-color: #F7F7F7 !important;
-  border-top: 1px solid #C6CBD1 !important;
+  background-color: #F1F1F1 !important;
+  border-top: unset !important;
+  height: 18px !important;
 }
 .completeness-gauge.completeness-gauge-gold span, .completeness-gauge span {
-  color: #2B587A !important;
+  color: #8BA1BC !important;
 }
 .completeness-gauge-gold>div, .completeness-gauge>div {
-  background-color: #C6CBD1 !important;
+  background-color: #DEE5EB !important;
+  height: 18px !important;
 }
 input[type="text"], input[type="password"], input[type~="text"], input[type~="password"], input[type="email"], input[type="phone"], input[type~="email"], input[type~="phone"], input[type="search"], select {
     border: 1px solid #C3CBD4;
@@ -1027,17 +1030,6 @@ body.dimmed > .dimmer {
 .additionalButtons .deviceButton.musicIcon.pressed {
   opacity: 1;
 }
-.button {
-  padding: 5px 7px 4px;
-  border-top: 1px solid #517295;
-  border-bottom: 1px solid #4e6f93;
-  border-left: 1px solid #4e6f93;
-  border-right: 1px solid #4e6f93;
-  padding-top: 5px;
-  padding-bottom: 4px;
-  text-shadow: 0 1px 0 #45688e;
-  max-height: 25px !important;
-}
 #act_tab_a {
   padding: 5px 10px;
   margin: -5px -10px;
@@ -1075,10 +1067,10 @@ body.dimmed > .dimmer {
   opacity: 1;
 }
 #ajax_audio_player #aj_player_play #aj_player_play_btn.paused {
-  background-position: -243px -28px;
+  background-position: -243px -28px !important;
 }
 #ajax_audio_player #aj_player_play #aj_player_play_btn {
-  background-position: -222px -28px;
+  background-position: -222px -28px !important;
 }
 #ajax_audio_player #aj_player_close_btn {
   transition: opacity 200ms ease-out;
@@ -1104,6 +1096,58 @@ body.dimmed > .dimmer {
 }
 .header_navigation #search_box select[name="section"] {
   height: 22px !important;
+}
+#profile_link, .profile_link {
+  padding: 4px !important;
+  border: none;
+  border-bottom: unset !important;
+  color: #2b587a;
+}
+input[class="button"]:active {
+  background: #5D81A7 !important;
+}
+.button {
+  padding: 5px 7px 4px !important;
+  border-top: 1px solid #517295 !important;
+  border-bottom: 1px solid #4e6f93 !important;
+  border-left: 1px solid #4e6f93 !important;
+  border-right: 1px solid #4e6f93 !important;
+  padding-top: 5px !important;
+  padding-bottom: 4px !important;
+  text-shadow: 0 1px 0 #45688e !important;
+  max-height: 25px !important !important;
+}
+.avatarDelete {
+  background: rgba(0, 0, 0) !important;
+  -webkit-transition: opacity 100ms linear;
+  -moz-transition: opacity 100ms linear;
+  -o-transition: opacity 100ms linear;
+  transition: opacity 100ms linear;
+  border-radius: 2px !important;
+  width: 15px !important;
+  height: 15px !important;
+  padding: unset !important;
+  opacity: 0;
+}
+div.avatar_block:hover .avatarDelete, div.avatar_block:hover .avatarDelete::before {
+  opacity: 0.5 !important;
+}
+div.avatar_block .avatarDelete:hover::before {
+  opacity: 1 !important;
+}
+.avatarDelete::before {
+  content: ' ';
+  background: url('data:image/gif;base64,R0lGODlhBwAHAIABAP///////yH5BAEAAAEALAAAAAAHAAcAAAIMBIKmsWrIXnLxuDMLADs=') !important;
+  background-repeat: no-repeat;
+  display: inline-block;
+  width: 7px !important;
+  height: 7px !important;
+  margin-top: 1px !important;
+  margin-left: 4px !important;
+  opacity: 0.5 !important;
+}
+.button:active {
+  background: #5e80a5 !important;
 }
 `;
     const vk2012flat_btns = document.createElement('style');
@@ -2001,6 +2045,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                 };
             })
             }
+            /* создание tippy для кнопочки в хедере */
             const hdrmusbtn = document.querySelector('#headerMusicBtn');
             tippy(hdrmusbtn, {
                 content: `
@@ -2078,7 +2123,16 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
            u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying')
            window.player.__updateFace();
            window.player.audioPlayer.onvolumechange();
-           instance.popper.querySelector('.audiosContainer.audiosSideContainer.audiosPaddingContainer').querySelector('.audioEntry.nowPlaying')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+           const acont = instance.popper.querySelector('.audiosContainer.audiosSideContainer.audiosPaddingContainer');
+           const aplaying = acont?.querySelector('.audioEntry.nowPlaying');
+           if (acont && aplaying) {
+               const aplayingRect = aplaying.getBoundingClientRect();
+               const acontRect = acont.getBoundingClientRect();
+               acont.scrollTo({
+                   top: aplayingRect.top - acontRect.top + acont.scrollTop - (acont.clientHeight / 2) + (aplayingRect.height / 2),
+                   behavior: 'smooth'
+               });
+           }
        }});
         };
         /* опенвк не существует, очень сырая функция, не советую */
