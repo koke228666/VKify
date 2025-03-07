@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.7
+@version        1.5.7.1
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -695,7 +695,6 @@ textarea {
   background: #FFFFFF;
   color: black;
   border: 1px solid #C0CAD5;
-  width: 328px;
   min-height: 27px;
   padding: 3px 25px 3px 3px;
     padding-bottom: 3px;
