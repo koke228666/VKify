@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.8.4
+@version        1.5.8.5
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -730,6 +730,9 @@ textarea {
 .post-menu .tippy-content {
   background-color: rgba(0, 0, 0, 0.6) !important;
   border-radius: 4px !important;
+  min-width: 180px;
+  min-height: 55px;
+  text-align: center;
 }
 .post-menu .tippy-box .tippy-arrow::before {
   border-top-color: transparent !important;
