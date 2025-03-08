@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.5.8.3
+@version        1.5.8.4
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -568,7 +568,6 @@ background-position: -108px -52px !important;
     transform: translateY(0);
 }
 
-
 .headerMusicBtn {
   background-position: -96px 0 !important;
 }
@@ -707,6 +706,55 @@ textarea {
   line-height: 150%;
   word-wrap: break-word;
   cursor: text;
+}
+.ovk-photo-view-dimmer {
+  z-index: 1026 !important;
+}
+.post-menu .tippy-box {
+  background: none !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+.post-menu * {
+  box-shadow: none !important;
+}
+.post-menu .tippy-box .like_tooltip_wrapper .like_tooltip_body,
+.post-menu .tippy-box .like_tooltip_wrapper .like_tooltip_head {
+  background: transparent !important;
+  border: none !important;
+}
+.post-menu .tippy-arrow {
+  color: rgba(0, 0, 0, 0.6) !important;
+  border: none;
+}
+.post-menu .tippy-content {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  border-radius: 4px !important;
+}
+.post-menu .tippy-box .tippy-arrow::before {
+  border-top-color: transparent !important;
+}
+.post-menu .tippy-box .like_tooltip_head {
+  border-radius: 4px 4px 0 0 !important;
+  font-size: 11px !important;
+  color: white;
+  height: 15px;
+  font-weight: bold;
+}
+.post-menu .tippy-box .like_tooltip_body {
+  border-radius: 0 0 4px 4px !important;
+}
+.post-menu .tippy-box span, .post-menu .tippy-box a,
+.post-menu .tippy-box text {
+  font-size: 11px;
+  color: white;
+  font-weight: bold;
+  text-shadow: 0px 1px #000;
+}
+
+.post-menu .like_tooltip_head span, .post-menu .like_tooltip_wrapper .like_tooltip_head a {
+  height: 14px;
+  padding-top: 9px;
 }
 }
 
