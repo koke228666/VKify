@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      1.9.9.1
+// @version      1.9.9.1.2
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -96,7 +96,8 @@ try {
     "vkifynpfullh": "Скрыть подробную информацию",
     "vkifyajplayere": "Показывать AJAX плеер OpenVK",
     "vkifyajplayerm": "Сделать AJAX плеер OpenVK маленьким",
-    "vkifyajplayerstat": "Сделать AJAX плеер OpenVK статичным"
+    "vkifyajplayerstat": "Сделать AJAX плеер OpenVK статичным",
+    "vkifylastfmlogout": "выйти из аккаунта"
 }`;
     window.vkifyloadLocalization = function loadLocalization(loccode) {
         if (loccode == 'ru-RU') {
@@ -1389,6 +1390,21 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
         liketext();
         moderninfoblock();
         minifyajplayer();
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.altKey && event.code === 'KeyN') {
+                var routrmsg = new CMessageBox({
+                    title: 'VKify',
+                    body: `Куда роутнемся?
+                           <br><br>
+                           <input class="routinp" type="text" placeholder="/settings">
+                           `,
+                    buttons: ["Открыть", tr('close')],
+                    callbacks: [() => {const dest = document.querySelector(`.ovk-diag-cont[data-id="${routrmsg.id}"]`).querySelector(`.routinp`).value;
+                                      router.route(dest);
+                                      NewNotification('VKify', `щя роутнемся на ${dest}`, popupimg, () => {}, 5000, false);}, () => {routrmsg.close()}]
+                });
+            }
+        });
         if (ajplayerstat === 'true') {
             const ajplayermin = document.createElement("style");
             ajplayermin.type = 'text/css';
@@ -2480,6 +2496,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                   <input type="checkbox" checked="" id="enable_scrobble">
                   <label for="enable_scrobble" class="nobold">${localization.vkifyscrobble}</label>
                   <a id="scrobble_account" onclick="authenticateLF();" style="margin-left: 25px;">${localization.vkifyaddlastfm} (${lastfm_token ?? "" !== "" ? localization.vkifylastfmtokentrue : localization.vkifylastfmtokenfalse})</a>
+                  <a id="lflogout" style="margin-left: 25px;${lastfm_token ?? "" !== "" ? "" : "display:none;"}">${localization.vkifylastfmlogout}</a>
                   <br><br>
                   <label id="iglabel" for="ignored_names" class="nobold">${localization.vkifyignames}</label><br><br>
                   <input type="text" id="ignored_names"></input><br><br>
@@ -2660,6 +2677,12 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         setTip('#iglabel', localization.vkifyiglabel)
         setTip('label[for="onlinefr"]', localization.vkifyonlinefrpopup)
         setTip('label[for="ajplayerm"]', '<img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKUAAAAvCAYAAACCAApkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMwSURBVHhe7ZxNbhQxFIQ5KivOAStgwxESFhwBkLgDYgUEBIiAxE8WbLhAwxvpoUdN2W33tLuduEr6NPar8tDqLiUZFnNrkqTOpFJK3UmllLqTSil1J1rKq1+/pw9fr6b3lz+FaIL1y3rGdFRKC7I3EaIFrJhHpdRPSLEl1jfUUSnZQSGWcPH5R9EMpVKKJlj5Hj15Mb26+PJvZmubYTFRKqVohpXw4fnzw2tcYw6lUoqmWAnvnz09wAppoFRK0ZQhSnnn3tkB5olytriPL99eTg/Onx3KaNjaZphDdVtKv2l447a4mTlS18WI2dIzW9H6euzDzKGQ78IHnb9rm73++O2/LEqlrCD+2yXXgZmSM1uxxbWw//558+n70QzVZSnjDcOb5/uIe8zH+dwe55Ho5XIOZlL71HxuPzePXomfyrHMmqCubSlrs0s9xL2SfMxiJrff2stRmjsF1GqlvH338QHm1RJvBN6U3D7nxf3c3HEfc2wdc07M4N7XCGZTc7Zf6iHuRVhuLVCrl/LUYrIb4kQf83Ne3Kfmvk9Rey6XRw9xH3O5/VIvUppbE1STUp5STHYT4gz9Uq92xqg9i17co8dgGZzF/VIvUppbE1SzUi4tJrsJcebrCMsyL/qpeQQzLBdnc1nMlPpxFufol+4j7kVyuZJ1LaimpTRYVsyDZbjJoJqX0mB5kUelDGKHSmBldFheCAelX99id1DdfdDJMcqvs9FANSsly9TA/qZqUcrcezKvxTWMDqpJKZlfiz18LECLQuTek3ktrmF0UKuXknm1xAfP1vbqxL3nWCY1xz1mczN2Fmfos8zooFYr5ZrEh8XWNX5unpo55jHcwyzO2Tp1bmRQw5Uy5TGYF99rbs7W9op4ZlRQ3ZWSPTTDvfiaWsdZap/KRpiXOsfmbI3nxDUpZWrGHixbxxnbxxnznJpzbM7WqXMjg7qRpfS1k5vFeZz5PDfzczgrWTs+GxlUl39TirFAqZRid1AqpdgdlEopdgelUordQamUYndQR6XUN/mKLSn6Jl9957nYkqLvPDdZUD8xRUusX6yQJlpKSdpTKqXUnVRKqTuplFJnmqY/ZriiecdKyJUAAAAASUVORK5CYII="/>')
+        document.querySelector('#lflogout').onclick = function() {
+            localStorage.setItem('LASTFM_TOKEN', '');
+            document.querySelector('#lflogout').style.display = "none"
+            document.querySelector('#scrobble_account').textContent = `${localization.vkifyaddlastfm} (${localization.vkifylastfmtokenfalse})`
+            NewNotification('VKify', "вот и всё", popupimg, () => {}, 5000, false);
+        }
         function saveSettings() {
             localStorage.setItem('enable_vkify_settings', document.getElementById('vkify_settings').checked);
             localStorage.setItem('vk2012', document.getElementById('vk2012').checked);
