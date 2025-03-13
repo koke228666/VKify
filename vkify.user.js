@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      2.0
+// @version      2.0.1
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -2430,7 +2430,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                 liketext();
             }
             const footer = document.querySelectorAll('.page_footer');
-            if (footer[0].textContent.includes('OpenVK Altair Preview')) {
+            if (footer[0].textContent.includes('|')) {
                 footer[0].innerHTML = vkfooter;
                 document.querySelector('#news').insertAdjacentHTML('beforebegin', `<div class="menu_divider"></div>`);
                 if (gifts_enabled == 'true') {
