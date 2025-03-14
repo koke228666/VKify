@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      2.0.1
+// @version      2.0.2
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -312,6 +312,19 @@ try {
         var vkifysett = `<a href="/settings?vkify" target="_blank" class="link">${localization.vkifysettingsfooter}</a>`;
     } else {
         var vkifysett = '';
+    }
+
+    function unlockProcessing() {
+        $(document).off("click", ".audioEmbed.processed .playerButton");
+        $(document).on("click", ".audioEmbed.processed .playerButton", (e) => {
+            const msg = new CMessageBox({
+                title: 'VKify',
+                body: `Кажется, вы кликнули на трек, который всё ещё обрабатывается. Так как OpenVK ещё глупенький, некоторые треки после успешной обработки не меняют своё состояние. Вы действительно хотите воспроизвести его?`,
+                unique_name: 'processing_notify',
+                buttons: [tr('yes'), tr('no')],
+                callbacks: [() => {e.target.closest('.audioEmbed.processed').classList.remove('processed'); e.target.querySelector('.playIcon').click()}, Function.noop]
+            })
+        });
     }
 
     function parseAudio() {
@@ -904,7 +917,7 @@ input[type~="search"][name~="query"] {
   color: #2B597D !important;
 }
 .audioEntry {
-  border-radius: 2px !important;
+  border-radius: 0px !important;
 }
 .searchList li, .searchList a, .verticalGrayTabs a {
   border-radius: 1px !important;
@@ -1463,6 +1476,7 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
         var md5script = document.createElement('script');
         md5script.setAttribute('src','https://rawcdn.githack.com/koke228666/VKify/main/scripts/md5.js');
         document.head.appendChild(md5script);
+        unlockProcessing();
         if (enable_scrobble == 'true') {
             const SetTracko = player.setTrack;
             player.setTrack = async function(id, ref) {
@@ -2421,6 +2435,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             moderninfoblock();
             minifyajplayer();
             unbigsearch();
+            unlockProcessing();
             if(u('.page_header').hasClass('search_expanded_at_all')) {
                 u('.page_header').removeClass('search_expanded_at_all').removeClass('search_expanded')
             } else {
