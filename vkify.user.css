@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.6.2
+@version        1.6.3
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -849,6 +849,10 @@ textarea {
 .home_button:active {
   transform: translateY(1px);
 }
+.home_button {
+  max-height: 32px;
+  margin-bottom: 8px;
+}
 .header_navigation #search_box #searchBoxFastTips .fastresultscount {
   display: block ruby;
   float: right;
@@ -861,5 +865,8 @@ textarea {
 }
 .navigation .link {
   color: #2b587a;
+}
+.tabs.stupid-fix {
+  margin-right: -1px;
 }
 }
