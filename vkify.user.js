@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      2.0.2
+// @version      2.0.2.1
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -1472,7 +1472,9 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
         const ovkuserid = window.openvk.current_id;
         const csrfToken = document.querySelector('meta[name="csrf"]').getAttribute('value');
         document.title = document.title.replace("OpenVK", localization.vknaming);
-        document.querySelector('#news').insertAdjacentHTML('beforebegin', `<div class="menu_divider"></div>`);
+        if (document.querySelector('#news')) {
+            document.querySelector('#news').insertAdjacentHTML('beforebegin', `<div class="menu_divider"></div>`);
+        }
         var md5script = document.createElement('script');
         md5script.setAttribute('src','https://rawcdn.githack.com/koke228666/VKify/main/scripts/md5.js');
         document.head.appendChild(md5script);
