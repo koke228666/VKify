@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      2.0.2.1
+// @version      2.1
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -329,8 +329,8 @@ try {
 
     function parseAudio() {
         const audioDump = localStorage.getItem('audio.lastDump');
-        const nothingtemplate = `<div class="vkifytracksplaceholder"><center style="background: white;border: #DEDEDE solid 1px;font-size: 11px;margin-top: 9px;margin-bottom: 3px;">
-                                    <span style="color: #707070;margin: 60px 0;display: block;">
+        const nothingtemplate = `<div class="vkifytracksplaceholder" style=""><center style="background: white;border: #DEDEDE solid 1px;font-size: 11px;margin-top: 9px;margin-bottom: 3px;height: 304px;">
+                                    <span style="color: #707070;margin: 25% 0;display: block;">
                                         ${tr('no_data_description')}
                                     </span>
                                 </center></div>`
@@ -401,21 +401,21 @@ try {
                     scrollContainer.appendChild(scrollNode);
                 });
                 if (scrollContainer.innerHTML) {
-                return `<div class="audiosContainer audiosSideContainer audiosPaddingContainer">
+                return {'scrollContainer': `<div class="audiosContainer audiosSideContainer audiosPaddingContainer">
                             <div class="scroll_container">
                                 ${scrollContainer.innerHTML}
                             </div>
-                        </div>`
+                        </div>`, 'nowPlayingUrl': adump.context.object.url};
                 } else {
-                return nothingtemplate
+                return {'scrollContainer': nothingtemplate, 'nowPlayingUrl': ''}
                 }
               }
             } catch (error) {
                 console.error(error)
-                return nothingtemplate
+                return {'scrollContainer': nothingtemplate, 'nowPlayingUrl': ''}
             }
         } else {
-            return nothingtemplate
+            return {'scrollContainer': nothingtemplate, 'nowPlayingUrl': ''}
         }
 
         function formatTime(seconds) {
@@ -423,7 +423,7 @@ try {
             const secs = seconds % 60;
             return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
         }
-        return nothingtemplate
+        return {'scrollContainer': nothingtemplate, 'nowPlayingUrl': ''}
     }
 
     var LASTFM_API_KEY = '22ca1fb2d2dbdb6a67c2bf9b3f28a03c'; //да это токены вкифу и что
@@ -478,13 +478,14 @@ try {
        theme: 'musicpopup',
        arrow: true,
        getReferenceClientRect: () => document.querySelector('#ajax_audio_player').getBoundingClientRect(),
-       maxWidth: 520,
-       offset: [170, 19],
+       maxWidth: 627,
+       width: 627,
+       offset: [186, 19],
        appendTo: document.body,
        popperOptions: {
            strategy: 'fixed'
        },
-       onMount(instance) {
+       async onMount(instance) {
         const style = document.createElement("style");
         style.id = "fullajplayerstyles";
         style.textContent = `
@@ -505,9 +506,13 @@ try {
         document.head.appendChild(style);
            instance.popperInstance.update()
            const placeholder = instance.popper.querySelector('.vkifytracksplaceholder') || instance.popper.querySelector('.audiosContainer.audiosSideContainer.audiosPaddingContainer');
+           let playingNowLnk
            if (placeholder) {
-               const trackList = `${parseAudio()}`;
+               const parsedAudio = parseAudio();
+               const trackList = `${parsedAudio.scrollContainer}`;
                placeholder.outerHTML = trackList;
+               playingNowLnk = parsedAudio.nowPlayingUrl.replace(/^\//, '');
+               instance.popper.querySelector('.musfooter .playingNow').innerHTML = `<img src="data:image/gif;base64,R0lGODlhIAAIAKECAEVojoSctMHN2QAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgADACwAAAAAIAAIAAACFZyPqcvtD6KMr445LcRUN9554kiSBQAh+QQFCgADACwCAAIAEgAEAAACD4xvM8DNiJRz8Mj5ari4AAAh+QQFCgADACwCAAIAHAAEAAACGJRvM8HNCqKMCCnn4JT1XPwMG9cJH6iNBQAh+QQFCgADACwMAAIAEgAEAAACD5RvM8HNiJRz8Mj5qri4AAAh+QQFCgADACwWAAIACAAEAAACBZSPqYsFACH5BAUUAAMALAAAAAAgAAgAAAIOnI+py+0Po5y02ouzPgUAOw==">`
            }
            u(`.audiosContainer .audioEmbed .audioEntry, .audios_padding .audioEmbed`).removeClass('nowPlaying');
            u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying')
@@ -522,6 +527,30 @@ try {
                    top: aplayingRect.top - acontRect.top + acont.scrollTop - (acont.clientHeight / 2) + (aplayingRect.height / 2),
                    behavior: 'smooth'
                });
+           }
+           if (/^(playlist\d+_\d+|audios-?\d+)$/.test(playingNowLnk)) {
+               if (/^(audios-?\d+)$/.test(playingNowLnk)) {
+                   try {
+                       let plName = (await window.OVKAPI.call("users.get", {"user_ids": Number(playingNowLnk.match(/_(\d+)$/)), "fields": "first_name"}))[0].first_name ;
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Аудиозаписи <b>${escapeHtml(plName)}</b></a>`
+                   } catch(error)
+                   {
+                       console.error('failed to load playing now', error)
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = ``
+                   }
+               } if (/^(playlist\d+_\d+)$/.test(playingNowLnk)) {
+                   try {
+                       let plName = (await window.OVKAPI.call("audio.getAlbums", {"owner_id": Number(playingNowLnk.match(/_(\d+)$/)[0])})).items.find(item => item.id === Number(playingNowLnk.match(/_(\d+)$/)[1])).title;
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Плейлист <b>${escapeHtml(plName)}</b></a>`
+                   } catch(error)
+                   {
+                       console.error('failed to load playing now', error)
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = ``
+                   }
+               }
+           } else {
+               console.log('unknown')
+               instance.popper.querySelector('.musfooter .playingNow').innerHTML = ``
            }
        },
        onHide(instance) {
@@ -765,7 +794,8 @@ input[class="button"] {
   border-bottom: 1px solid #4e6f93;
   border-left: 1px solid #4e6f93;
   border-right: 1px solid #4e6f93;
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAXCAYAAAAhrZ4MAAAAfUlEQVQYGRXD1w2BAQCF0Tuj/guCIJhAb9GiLOBF70RZwGhXvpMc1VY/U9Xl11Rl8TFVnr9NlWYvU8Xp01Rh8jCVH99N5UY3U9nh1VRmcDGV7p9NpXpnU8nuyVTQOZpKtA+m4q29qVhzZyra2JqK1LemwvWNqVBtbSroXc0/55J0ndZ094AAAAAASUVORK5CYII=") repeat-x !important;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABUCAIAAADMNMqaAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABXSURBVHjapI7BDYAwDANNxmYVZmGxPOKmkKgNqvj0YflaWcrJed0CQEh482nSe+ZPLNkwOP/N6qazJdd9DeImi0t38xyqGp7vZubVe+kdbrubn9tNgAEAaD7UiMhv1xkAAAAASUVORK5CYII=") #6181a6 repeat-x !important;
+  background-position: 0px -16px !important;
   border-radius: 2px;
 }
 
@@ -779,7 +809,6 @@ input[class="button"] {
   outline: none;
   white-space: nowrap;
   background: #597da3;
-  background-position: 0px -16px;
   color: #fff;
   padding: 4px 8px 4px;
   text-shadow: 0 1px 0 #597da3;
@@ -1200,7 +1229,7 @@ input[class="button"]:active {
   padding-top: 5px !important;
   padding-bottom: 4px !important;
   text-shadow: 0 1px 0 #45688e !important;
-  max-height: 25px !important !important;
+  max-height: 25px !important;
 }
 .avatarDelete {
   background: rgba(0, 0, 0) !important;
@@ -1246,6 +1275,11 @@ div.avatar_block .avatarDelete:hover::before {
   width: 151px;
   padding: 10px;
   border-radius: 0px !important;
+}
+.button:hover {
+  color: #fff !important;
+  text-decoration: none;
+  background-position: 0px -8px !important;
 }
 `;
     const vk2012flat_btns = document.createElement('style');
@@ -1447,9 +1481,9 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
                         <div id="aj_player_track" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;transform: translateY(-2px);">
                             <div id="aj_player_track_name">
                                 <a id="aj_player_track_title" class="noOverflow" style="max-width: 300px;user-select: none;cursor: unset;">
-                                    <b>?</b>
+                                    <b>${tr('track_unknown')}</b>
                                     <br>
-                                    <span>?</span>
+                                    <span>${tr('track_noname')}</span>
                                 </a>
                             </div>
                         </div>
@@ -1468,7 +1502,7 @@ content: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjo
                 break;
         }
     }
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
         const ovkuserid = window.openvk.current_id;
         const csrfToken = document.querySelector('meta[name="csrf"]').getAttribute('value');
         document.title = document.title.replace("OpenVK", localization.vknaming);
@@ -2132,6 +2166,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                                     searchTimeout = setTimeout(async () => {
                                                         const srq = document.querySelector('#search_box form input[type="search"]').value;
                                                         document.querySelector('#searchBoxFastTips').innerHTML = `<div class="fastpreload"></div>`;
+                                                        try {
                                                         const groupsd = await window.OVKAPI.call("groups.search", {"q": srq})
                                                         const usersd = await window.OVKAPI.call("users.search", {"q": srq, "fields": "photo_50"})
                                                         const audiosd = await window.OVKAPI.call("audio.search", {"q": srq})
@@ -2169,7 +2204,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                                 </div>
                                                 <a href="/search?section=users&q=${srq}">
                                                     <div class="fastresult">
-                                                        Пользователи <b>"${escapeHtml(srq)}"</b> (${usersd.count})
+                                                        Пользователи <b>${escapeHtml(srq)}</b> (${usersd.count})
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
@@ -2177,7 +2212,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                             <div>
                                                 <a href="/search?section=groups&q=${srq}">
                                                     <div class="fastresult">
-                                                        Группы <b>"${escapeHtml(srq)}"</b> (${groupsd.count})
+                                                        Группы <b>${escapeHtml(srq)}</b> (${groupsd.count})
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
@@ -2185,7 +2220,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                             <div>
                                                 <a href="/search?section=audios&q=${srq}">
                                                     <div class="fastresult">
-                                                        Аудиозаписи <b>"${escapeHtml(srq)}"</b> (${audiosd.count})
+                                                        Аудиозаписи <b>${escapeHtml(srq)}</b> (${audiosd.count})
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
@@ -2193,12 +2228,47 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                             <div>
                                                 <a href="/search?section=docs&q=${srq}">
                                                     <div class="fastresult">
-                                                        Документы <b>"${escapeHtml(srq)}"</b> (${docsd.count})
+                                                        Документы <b>${escapeHtml(srq)}</b> (${docsd.count})
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
                                             </div>
-                                        `
+                                        `} catch (error) {
+                                            console.error('failed to load search tip results, using simple template:', error)
+                                            document.querySelector('#searchBoxFastTips').innerHTML = `
+                                            <div>
+                                                <a href="/search?section=users&q=${srq}">
+                                                    <div class="fastresult">
+                                                        Пользователи <b>${escapeHtml(srq)}</b>
+                                                        <div class="arrow"></div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <a href="/search?section=groups&q=${srq}">
+                                                    <div class="fastresult">
+                                                        Группы <b>${escapeHtml(srq)}</b>
+                                                        <div class="arrow"></div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <a href="/search?section=audios&q=${srq}">
+                                                    <div class="fastresult">
+                                                        Аудиозаписи <b>${escapeHtml(srq)}</b>
+                                                        <div class="arrow"></div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <a href="/search?section=docs&q=${srq}">
+                                                    <div class="fastresult">
+                                                        Документы <b>${escapeHtml(srq)}</b>
+                                                        <div class="arrow"></div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        `}
                                                     }, 1500);}
                 else {document.querySelector('#searchBoxFastTips').style.display = "none";
                      document.querySelector('.friendslink').style.display = "unset";}}
@@ -2224,7 +2294,45 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             })
             }
             /* создание tippy для кнопочки в хедере */
+           const friendsd = await window.OVKAPI.call("friends.get", {"user_id": window.openvk.current_id, "fields": "first_name,last_name,photo_50", "count": 100})
+           const friendsmap = friendsd.items
+           .slice(0, friendsd.count)
+           .map(item => ({
+               id: item.id,
+               photo_50: item.photo_50,
+               first_name: item.first_name,
+               last_name: item.last_name
+           }));
+           let friendshtml = ''
+           friendsmap.forEach((user, index) => {
+               friendshtml += `
+                <a onclick="tippy.hideAll();" href="/audios${user.id}">
+                    <div class="elem">
+                        <img src="${user.photo_50}">
+                        <div class="additionalInfo">
+                            <span class="name noOverflow">${escapeHtml(user.first_name)} ${escapeHtml(user.last_name)}</span>
+                        </div>
+                    </div>
+                </a>
+              `;
+           });
             const mushtml = `
+<div style="" class="rightlist">
+    <div class="verticalGrayTabs">
+        <div class="with_padding">
+            <a onclick="tippy.hideAll();" href="/audios${window.openvk.current_id}">${tr('my_music')}</a>
+            <a onclick="tippy.hideAll();" href="/player/upload">${tr('upload_audio')}</a>
+            <a onclick="tippy.hideAll();" href="/search?section=audios" id="ki">${tr('audio_new')}</a>
+            <a onclick="tippy.hideAll();" href="/search?section=audios&order=listens" id="ki">${tr('audio_popular')}</a>
+            <hr>
+            <a onclick="tippy.hideAll();" href="/playlists${window.openvk.current_id}" id="ki">${tr('my_playlists')}</a>
+            <a onclick="tippy.hideAll();" href="/audios/newPlaylist">${tr('new_playlist')}</a>
+        </div>
+        <div class="friendsAudiosList">
+        ${friendshtml}
+        </div>
+    </div>
+</div>
 <div class="bigPlayer ctx_place">
     <div class="bigPlayerWrapper">
         <div class="playButtons">
@@ -2279,6 +2387,9 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
     </div>
 </div>
 <div class="vkifytracksplaceholder"></div>
+    <div class="musfooter"><span class="playingNow"></span>
+    <input onclick="tippy.hideAll();" value="Закрыть" class="button" type="submit">
+</div>
 `
        tippy(document.querySelector('#headerMusicLinkDiv'), {
        content: mushtml,
@@ -2287,16 +2398,21 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
        interactive: true,
        placement: 'bottom',
        theme: 'musicpopup',
+       width: 627,
        arrow: true,
        getReferenceClientRect: () => document.querySelector('#headerMusicBtn').getBoundingClientRect(),
-       maxWidth: 520,
-       offset: [-132, 17],
+       maxWidth: 627,
+       offset: [-185, 17],
        appendTo: document.body,
-       onMount(instance) {
+       async onMount(instance) {
            const placeholder = instance.popper.querySelector('.vkifytracksplaceholder') || instance.popper.querySelector('.audiosContainer.audiosSideContainer.audiosPaddingContainer');
+           let playingNowLnk
            if (placeholder) {
-               const trackList = `${parseAudio()}`;
+               const parsedAudio = parseAudio();
+               const trackList = `${parsedAudio.scrollContainer}`;
                placeholder.outerHTML = trackList;
+               playingNowLnk = parsedAudio.nowPlayingUrl.replace(/^\//, '');
+               instance.popper.querySelector('.musfooter .playingNow').innerHTML = `<img src="data:image/gif;base64,R0lGODlhIAAIAKECAEVojoSctMHN2QAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgADACwAAAAAIAAIAAACFZyPqcvtD6KMr445LcRUN9554kiSBQAh+QQFCgADACwCAAIAEgAEAAACD4xvM8DNiJRz8Mj5ari4AAAh+QQFCgADACwCAAIAHAAEAAACGJRvM8HNCqKMCCnn4JT1XPwMG9cJH6iNBQAh+QQFCgADACwMAAIAEgAEAAACD5RvM8HNiJRz8Mj5qri4AAAh+QQFCgADACwWAAIACAAEAAACBZSPqYsFACH5BAUUAAMALAAAAAAgAAgAAAIOnI+py+0Po5y02ouzPgUAOw==">`
            }
            u(`.audiosContainer .audioEmbed .audioEntry, .audios_padding .audioEmbed`).removeClass('nowPlaying');
            u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying')
@@ -2311,6 +2427,30 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                    top: aplayingRect.top - acontRect.top + acont.scrollTop - (acont.clientHeight / 2) + (aplayingRect.height / 2),
                    behavior: 'smooth'
                });
+           }
+           if (/^(playlist\d+_\d+|audios-?\d+)$/.test(playingNowLnk)) {
+               if (/^(audios-?\d+)$/.test(playingNowLnk)) {
+                   try {
+                       let plName = (await window.OVKAPI.call("users.get", {"user_ids": Number(playingNowLnk.match(/_(\d+)$/)), "fields": "first_name"}))[0].first_name ;
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Аудиозаписи <b>${escapeHtml(plName)}</b></a>`
+                   } catch(error)
+                   {
+                       console.error('failed to load playing now', error)
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = ``
+                   }
+               } if (/^(playlist\d+_\d+)$/.test(playingNowLnk)) {
+                   try {
+                       let plName = (await window.OVKAPI.call("audio.getAlbums", {"owner_id": Number(playingNowLnk.match(/_(\d+)$/)[0])})).items.find(item => item.id === Number(playingNowLnk.match(/_(\d+)$/)[1])).title;
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Плейлист <b>${escapeHtml(plName)}</b></a>`
+                   } catch(error)
+                   {
+                       console.error('failed to load playing now', error)
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = ``
+                   }
+               }
+           } else {
+               console.log('unknown')
+               instance.popper.querySelector('.musfooter .playingNow').innerHTML = ``
            }
        }});
        if (ajplayerstat === 'true') {
@@ -2449,8 +2589,8 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             const footer = document.querySelectorAll('.page_footer');
             if (footer[0].textContent.includes('|')) {
                 footer[0].innerHTML = vkfooter;
-                document.querySelector('#news').insertAdjacentHTML('beforebegin', `<div class="menu_divider"></div>`);
                 if (gifts_enabled == 'true') {
+                    document.querySelector('#news').insertAdjacentHTML('beforebegin', `<div class="menu_divider"></div>`);
                     document.querySelector('#news').insertAdjacentHTML('afterend', window.lastgift);
                 }
                 /* замена счётчиков новых уведомлений */
