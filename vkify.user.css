@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.6.3
+@version        1.6.4
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -422,7 +422,7 @@ img[src*="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/applic
   margin-left: -9px;
   margin-top: -5px;
   margin-right: 0px;
-  width: 520px;
+  width: 627px;
   background-color: rgb(240, 241, 242);
   height: 46px;
   border: unset !important;
@@ -460,7 +460,7 @@ img[src*="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/applic
   margin-left: 15px;
   display: flex;
   flex-direction: column;
-  width: 273px;
+  width: 370px;
 }
 .tippy-content .bigPlayer .trackInfo .trackName {
   max-width: 78% !important;
@@ -471,7 +471,7 @@ img[src*="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/applic
   border-radius: 0 !important;
   border: 1px solid #B5B9BC;
   background-color: #FFFFFF;
-  box-shadow: 0px 2px 6px -5px rgba(0, 0, 0, 0.8);
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.35);
   color: #000;
 }
 .tippy-box[data-theme~="musicpopup"] .tippy-arrow {
@@ -629,11 +629,12 @@ body, h4 {
   width: 194px;
 }
 .tippy-content .audiosContainer.audiosSideContainer.audiosPaddingContainer{
- width: 96.5%;
+ width: 425px;
  font-size: 11px;
  overflow-y: auto;
  max-height: 300px;
  height: 300px;
+ scrollbar-width: thin;
 }
 .bigPlayer .playButtons .nextButton, .bigPlayer .playButtons .backButton {
   opacity: 0.83;
@@ -868,5 +869,57 @@ textarea {
 }
 .tabs.stupid-fix {
   margin-right: -1px;
+}
+.vkifytracksplaceholder {
+  max-height: 310px;
+  height: 310px;
+}
+.tippy-content .rightlist {
+  float: right;
+  margin-top: 41px;
+  width: 176px;
+  border-left: 1px solid #DAE2E8;
+  height: 316px;
+  display: block;
+  margin-right: -9px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.tippy-content .rightlist .verticalGrayTabs {
+  padding-top: 2px;
+}
+.tippy-content .bigPlayer .additionalButtons {
+  padding-left: 24px;
+}
+.musfooter {
+  margin-left: -9px;
+  margin-bottom: -5px;
+  background-color: #F2F2F2;
+  border-top: 1px solid #DAE1E8;
+  width: 607px;
+  height: 30px;
+  padding: 13px 10px 7px;
+}
+.musfooter .button {
+  float: right;
+  outline: none;
+  padding: 5px 17px !important;
+}
+.musfooter .playingNow {
+  font-size: 11px;
+  color: #777777;
+  display: inline-block;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 4px 0px 0px 4px;
+}
+.searchList li, .searchList a, .verticalGrayTabs a {
+  font-size: 11px;
+}
+.searchList #used, .verticalGrayTabs #used {
+  border: none !important;
+  background: #5e82a8;
 }
 }
