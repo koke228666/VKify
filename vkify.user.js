@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      2.1
+// @version      2.1.1
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -15,6 +15,10 @@
 try {
 (function() {
     'use strict';
+	if (!localStorage.getItem('volume')) {
+		document.querySelectorAll('style.stylus').forEach(el => el.textContent = '');
+		return
+	}
     /* доп. настройка овк (выключение AJAX и бесконечной прокрутки)*/
     if (Number(localStorage.getItem('ux.auto_scroll')) == 1) {
         localStorage.setItem('ux.auto_scroll', 0)
@@ -327,10 +331,45 @@ try {
         });
     }
 
-    function parseAudio() {
+    async function loadMoreAudio() {
+        if (window.musHtml) {
+            window.musHtml.querySelector('.audiosContainer .loadMore').innerHTML = `<img src="data:image/gif;base64,R0lGODlhIAAIAKECAEVojoSctMHN2QAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgADACwAAAAAIAAIAAACFZyPqcvtD6KMr445LcRUN9554kiSBQAh+QQFCgADACwCAAIAEgAEAAACD4xvM8DNiJRz8Mj5ari4AAAh+QQFCgADACwCAAIAHAAEAAACGJRvM8HNCqKMCCnn4JT1XPwMG9cJH6iNBQAh+QQFCgADACwMAAIAEgAEAAACD5RvM8HNiJRz8Mj5qri4AAAh+QQFCgADACwWAAIACAAEAAACBZSPqYsFACH5BAUUAAMALAAAAAAgAAgAAAIOnI+py+0Po5y02ouzPgUAOw==" />`;
+            await window.player.loadContext(Number(Math.max(...window.player.context["playedPages"])) + 1, true);
+            window.player.dump();
+            let parsedaud = parseAudio(true).scrollContainer;
+            let tmp = document.createElement('div');
+            tmp.innerHTML = parsedaud;
+            window.musHtml.querySelectorAll('.scroll_container .scroll_node [data-realid]').forEach(scrollNode => {
+                const realId = scrollNode.getAttribute('data-realid');
+                tmp.querySelectorAll('.scroll_node [data-realid]').forEach(node => {
+                    if (node.getAttribute('data-realid') === realId) node.closest('.scroll_node').remove();
+                });
+            });
+            parsedaud = tmp.innerHTML;
+            window.musHtml.querySelector('.audiosContainer.audiosSideContainer.audiosPaddingContainer .loadMore_node').outerHTML = parsedaud;
+            window.musHtml.querySelector('.loadMore').onclick = async function() {await loadMoreAudio();}
+            u(`.audiosContainer .audioEmbed .audioEntry, .audios_padding .audioEmbed`).removeClass('nowPlaying');
+            u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying');
+        }
+    }
+
+    function cleanUpAudioList() {
+        let ldump = localStorage.getItem('audio.lastDump');
+        if (ldump) {
+            let data = JSON.parse(ldump);
+            if (data.tracks && data.tracks.length > 20) {
+                data.tracks = data.tracks.slice(-20);
+                localStorage.setItem('audio.lastDump', JSON.stringify(data));
+                console.log('playlist context cleaned up!');
+            }
+        }
+    }
+
+    function parseAudio(onlyscnodes = false) {
+        cleanUpAudioList();
         const audioDump = localStorage.getItem('audio.lastDump');
-        const nothingtemplate = `<div class="vkifytracksplaceholder" style=""><center style="background: white;border: #DEDEDE solid 1px;font-size: 11px;margin-top: 9px;margin-bottom: 3px;height: 304px;">
-                                    <span style="color: #707070;margin: 25% 0;display: block;">
+        const nothingtemplate = `<div class="vkifytracksplaceholder" style=""><center style="background: white;border: #DEDEDE solid 1px;font-size: 11px;margin-top: 9px;margin-bottom: 3px;height: 362px;width: 430px;">
+                                    <span style="color: #707070;margin: 172px 0;display: block;">
                                         ${tr('no_data_description')}
                                     </span>
                                 </center></div>`
@@ -338,7 +377,7 @@ try {
             try {
                 if (JSON.parse(audioDump)) {
                 let adump = JSON.parse(audioDump);
-                adump.tracks = Array.from(new Map(JSON.parse(audioDump).tracks.map(track => [track.id, track])).values());
+                adump.tracks = Array.from(new Map(adump.tracks.map(track => [track.id, track])).values());
                 const scrollContainer = document.createElement('div');
                 scrollContainer.classList.add('scroll_container');
                 adump.tracks.forEach(track => {
@@ -401,11 +440,20 @@ try {
                     scrollContainer.appendChild(scrollNode);
                 });
                 if (scrollContainer.innerHTML) {
-                return {'scrollContainer': `<div class="audiosContainer audiosSideContainer audiosPaddingContainer">
+                const loadmore = document.createElement('div');
+                loadmore.classList.add('scroll_node');
+                loadmore.classList.add('loadMore_node');
+                loadmore.innerHTML = `<a class="loadMore">Загрузить ещё</a>`
+                scrollContainer.appendChild(loadmore);
+                if (onlyscnodes) {
+                    return {'scrollContainer': `${scrollContainer.innerHTML}`, 'nowPlayingUrl': adump.context.object.url};
+                } else {
+                    return {'scrollContainer': `<div class="audiosContainer audiosSideContainer audiosPaddingContainer">
                             <div class="scroll_container">
                                 ${scrollContainer.innerHTML}
                             </div>
                         </div>`, 'nowPlayingUrl': adump.context.object.url};
+                }
                 } else {
                 return {'scrollContainer': nothingtemplate, 'nowPlayingUrl': ''}
                 }
@@ -480,12 +528,16 @@ try {
        getReferenceClientRect: () => document.querySelector('#ajax_audio_player').getBoundingClientRect(),
        maxWidth: 627,
        width: 627,
-       offset: [186, 19],
+       offset: [220, 19],
        appendTo: document.body,
        popperOptions: {
            strategy: 'fixed'
        },
+       onHidden(instance) {
+           window.musHtml = undefined;
+       },
        async onMount(instance) {
+        window.musHtml = instance.popper;
         const style = document.createElement("style");
         style.id = "fullajplayerstyles";
         style.textContent = `
@@ -512,10 +564,13 @@ try {
                const trackList = `${parsedAudio.scrollContainer}`;
                placeholder.outerHTML = trackList;
                playingNowLnk = parsedAudio.nowPlayingUrl.replace(/^\//, '');
-               instance.popper.querySelector('.musfooter .playingNow').innerHTML = `<img src="data:image/gif;base64,R0lGODlhIAAIAKECAEVojoSctMHN2QAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgADACwAAAAAIAAIAAACFZyPqcvtD6KMr445LcRUN9554kiSBQAh+QQFCgADACwCAAIAEgAEAAACD4xvM8DNiJRz8Mj5ari4AAAh+QQFCgADACwCAAIAHAAEAAACGJRvM8HNCqKMCCnn4JT1XPwMG9cJH6iNBQAh+QQFCgADACwMAAIAEgAEAAACD5RvM8HNiJRz8Mj5qri4AAAh+QQFCgADACwWAAIACAAEAAACBZSPqYsFACH5BAUUAAMALAAAAAAgAAgAAAIOnI+py+0Po5y02ouzPgUAOw==">`
+               if (instance.popper.querySelector('.loadMore')) {
+                   instance.popper.querySelector('.musfooter .playingNow').innerHTML = `<img src="data:image/gif;base64,R0lGODlhIAAIAKECAEVojoSctMHN2QAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgADACwAAAAAIAAIAAACFZyPqcvtD6KMr445LcRUN9554kiSBQAh+QQFCgADACwCAAIAEgAEAAACD4xvM8DNiJRz8Mj5ari4AAAh+QQFCgADACwCAAIAHAAEAAACGJRvM8HNCqKMCCnn4JT1XPwMG9cJH6iNBQAh+QQFCgADACwMAAIAEgAEAAACD5RvM8HNiJRz8Mj5qri4AAAh+QQFCgADACwWAAIACAAEAAACBZSPqYsFACH5BAUUAAMALAAAAAAgAAgAAAIOnI+py+0Po5y02ouzPgUAOw==">`;
+                   instance.popper.querySelector('.loadMore').onclick = async function() {await loadMoreAudio();};
+               }
            }
            u(`.audiosContainer .audioEmbed .audioEntry, .audios_padding .audioEmbed`).removeClass('nowPlaying');
-           u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying')
+           u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying');
            window.player.__updateFace();
            window.player.audioPlayer.onvolumechange();
            const acont = instance.popper.querySelector('.audiosContainer.audiosSideContainer.audiosPaddingContainer');
@@ -528,17 +583,17 @@ try {
                    behavior: 'smooth'
                });
            }
-           if (/^(playlist\d+_\d+|audios-?\d+)$/.test(playingNowLnk)) {
-               if (/^(audios-?\d+)$/.test(playingNowLnk)) {
+           if (/^(playlist\d+_\d+|audios-?\d+)(\?.*)?$/.test(playingNowLnk)) {
+               if (/^(audios-?\d+)(\?.*)?$/.test(playingNowLnk)) {
                    try {
-                       let plName = (await window.OVKAPI.call("users.get", {"user_ids": Number(playingNowLnk.match(/_(\d+)$/)), "fields": "first_name"}))[0].first_name ;
+                       let plName = (await window.OVKAPI.call("users.get", {"user_ids": Number(playingNowLnk.match(/[^\d]*(\d+)/)[1]), "fields": "first_name"}))[0].first_name ;
                        instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Аудиозаписи <b>${escapeHtml(plName)}</b></a>`
                    } catch(error)
                    {
                        console.error('failed to load playing now', error)
                        instance.popper.querySelector('.musfooter .playingNow').innerHTML = ``
                    }
-               } if (/^(playlist\d+_\d+)$/.test(playingNowLnk)) {
+               } if (/^(playlist\d+_\d+)(\?.*)?$/.test(playingNowLnk)) {
                    try {
                        let plName = (await window.OVKAPI.call("audio.getAlbums", {"owner_id": Number(playingNowLnk.match(/_(\d+)$/)[0])})).items.find(item => item.id === Number(playingNowLnk.match(/_(\d+)$/)[1])).title;
                        instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Плейлист <b>${escapeHtml(plName)}</b></a>`
@@ -549,7 +604,6 @@ try {
                    }
                }
            } else {
-               console.log('unknown')
                instance.popper.querySelector('.musfooter .playingNow').innerHTML = ``
            }
        },
@@ -2404,7 +2458,11 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
        maxWidth: 627,
        offset: [-185, 17],
        appendTo: document.body,
+       onHidden(instance) {
+           window.musHtml = undefined;
+       },
        async onMount(instance) {
+        window.musHtml = instance.popper;
            const placeholder = instance.popper.querySelector('.vkifytracksplaceholder') || instance.popper.querySelector('.audiosContainer.audiosSideContainer.audiosPaddingContainer');
            let playingNowLnk
            if (placeholder) {
@@ -2412,7 +2470,10 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                const trackList = `${parsedAudio.scrollContainer}`;
                placeholder.outerHTML = trackList;
                playingNowLnk = parsedAudio.nowPlayingUrl.replace(/^\//, '');
-               instance.popper.querySelector('.musfooter .playingNow').innerHTML = `<img src="data:image/gif;base64,R0lGODlhIAAIAKECAEVojoSctMHN2QAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgADACwAAAAAIAAIAAACFZyPqcvtD6KMr445LcRUN9554kiSBQAh+QQFCgADACwCAAIAEgAEAAACD4xvM8DNiJRz8Mj5ari4AAAh+QQFCgADACwCAAIAHAAEAAACGJRvM8HNCqKMCCnn4JT1XPwMG9cJH6iNBQAh+QQFCgADACwMAAIAEgAEAAACD5RvM8HNiJRz8Mj5qri4AAAh+QQFCgADACwWAAIACAAEAAACBZSPqYsFACH5BAUUAAMALAAAAAAgAAgAAAIOnI+py+0Po5y02ouzPgUAOw==">`
+               if (instance.popper.querySelector('.loadMore')) {
+                   instance.popper.querySelector('.musfooter .playingNow').innerHTML = `<img src="data:image/gif;base64,R0lGODlhIAAIAKECAEVojoSctMHN2QAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgADACwAAAAAIAAIAAACFZyPqcvtD6KMr445LcRUN9554kiSBQAh+QQFCgADACwCAAIAEgAEAAACD4xvM8DNiJRz8Mj5ari4AAAh+QQFCgADACwCAAIAHAAEAAACGJRvM8HNCqKMCCnn4JT1XPwMG9cJH6iNBQAh+QQFCgADACwMAAIAEgAEAAACD5RvM8HNiJRz8Mj5qri4AAAh+QQFCgADACwWAAIACAAEAAACBZSPqYsFACH5BAUUAAMALAAAAAAgAAgAAAIOnI+py+0Po5y02ouzPgUAOw==">`;
+                   instance.popper.querySelector('.loadMore').onclick = async function() {await loadMoreAudio();};
+               }
            }
            u(`.audiosContainer .audioEmbed .audioEntry, .audios_padding .audioEmbed`).removeClass('nowPlaying');
            u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying')
@@ -2428,19 +2489,19 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                    behavior: 'smooth'
                });
            }
-           if (/^(playlist\d+_\d+|audios-?\d+)$/.test(playingNowLnk)) {
-               if (/^(audios-?\d+)$/.test(playingNowLnk)) {
+           if (/^(playlist\d+_\d+|audios-?\d+)(\?.*)?$/.test(playingNowLnk)) {
+               if (/^(audios-?\d+)(\?.*)?$/.test(playingNowLnk)) {
                    try {
-                       let plName = (await window.OVKAPI.call("users.get", {"user_ids": Number(playingNowLnk.match(/_(\d+)$/)), "fields": "first_name"}))[0].first_name ;
+                       let plName = (await window.OVKAPI.call("users.get", {"user_ids": Number(playingNowLnk.match(/[^\d]*(\d+)/)[1]), "fields": "first_name"}))[0].first_name ;
                        instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Аудиозаписи <b>${escapeHtml(plName)}</b></a>`
                    } catch(error)
                    {
                        console.error('failed to load playing now', error)
                        instance.popper.querySelector('.musfooter .playingNow').innerHTML = ``
                    }
-               } if (/^(playlist\d+_\d+)$/.test(playingNowLnk)) {
+               } if (/^(playlist\d+_\d+)(\?.*)?$/.test(playingNowLnk)) {
                    try {
-                       let plName = (await window.OVKAPI.call("audio.getAlbums", {"owner_id": Number(playingNowLnk.match(/_(\d+)$/)[0])})).items.find(item => item.id === Number(playingNowLnk.match(/_(\d+)$/)[1])).title;
+                       let plName = (await window.OVKAPI.call("audio.getAlbums", {"owner_id": Number(playingNowLnk.match(/(\d+)_(\d+)/)[1])})).items.find(item => item.id === Number(playingNowLnk.match(/(\d+)_(\d+)/)[2])).title;
                        instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Плейлист <b>${escapeHtml(plName)}</b></a>`
                    } catch(error)
                    {
@@ -2449,7 +2510,6 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                    }
                }
            } else {
-               console.log('unknown')
                instance.popper.querySelector('.musfooter .playingNow').innerHTML = ``
            }
        }});
