@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.6.4
+@version        1.6.5
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -629,12 +629,12 @@ body, h4 {
   width: 194px;
 }
 .tippy-content .audiosContainer.audiosSideContainer.audiosPaddingContainer{
- width: 425px;
- font-size: 11px;
- overflow-y: auto;
- max-height: 300px;
- height: 300px;
- scrollbar-width: thin;
+  width: 425px;
+  font-size: 11px;
+  overflow-y: auto;
+  max-height: 366px;
+  height: 366px;
+  scrollbar-width: thin;
 }
 .bigPlayer .playButtons .nextButton, .bigPlayer .playButtons .backButton {
   opacity: 0.83;
@@ -713,7 +713,7 @@ textarea {
   cursor: text;
 }
 .ovk-photo-view-dimmer {
-  z-index: 1026 !important;
+  z-index: 1024 !important;
 }
 .post-menu .tippy-box,
 .messenger-app--input---messagebox .tippy-box{
@@ -871,15 +871,15 @@ textarea {
   margin-right: -1px;
 }
 .vkifytracksplaceholder {
-  max-height: 310px;
-  height: 310px;
+  max-height: 373px;
+  height: 373px;
 }
 .tippy-content .rightlist {
   float: right;
   margin-top: 41px;
   width: 176px;
   border-left: 1px solid #DAE2E8;
-  height: 316px;
+  height: 382px;
   display: block;
   margin-right: -9px;
   overflow-y: auto;
@@ -921,5 +921,17 @@ textarea {
 .searchList #used, .verticalGrayTabs #used {
   border: none !important;
   background: #5e82a8;
+}
+.loadMore {
+  display: block;
+  padding: 10px 0px 10px;
+  user-select: none;
+  text-align: center;
+}
+.loadMore:hover {
+  background: #E9EDF1;
+}
+.ovk-diag-body .audiosInsert {
+  height: 81%;
 }
 }
