@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.6.5
+@version        1.6.5.1
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -934,4 +934,5 @@ textarea {
 .ovk-diag-body .audiosInsert {
   height: 81%;
 }
+#ajax_audio_player {z-index: 1023 !important;}
 }
