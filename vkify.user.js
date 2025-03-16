@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      2.1.1
+// @version      2.1.2
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -15,10 +15,6 @@
 try {
 (function() {
     'use strict';
-	if (!localStorage.getItem('volume')) {
-		document.querySelectorAll('style.stylus').forEach(el => el.textContent = '');
-		return
-	}
     /* доп. настройка овк (выключение AJAX и бесконечной прокрутки)*/
     if (Number(localStorage.getItem('ux.auto_scroll')) == 1) {
         localStorage.setItem('ux.auto_scroll', 0)
