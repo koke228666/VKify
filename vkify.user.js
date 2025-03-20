@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      2.1.2
+// @version      2.1.3
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -97,7 +97,9 @@ try {
     "vkifyajplayere": "Показывать AJAX плеер OpenVK",
     "vkifyajplayerm": "Сделать AJAX плеер OpenVK маленьким",
     "vkifyajplayerstat": "Сделать AJAX плеер OpenVK статичным",
-    "vkifylastfmlogout": "выйти из аккаунта"
+    "vkifylastfmlogout": "выйти из аккаунта",
+    "vkifyloadmore": "Загрузить ещё",
+    "vkifyflatbtns": "Использовать плоские кнопки"
 }`;
     window.vkifyloadLocalization = function loadLocalization(loccode) {
         if (loccode == 'ru-RU') {
@@ -178,6 +180,7 @@ try {
     const ajplayere = localStorage.getItem('ajplayere');
     const ajplayerm = localStorage.getItem('ajplayerm');
     const ajplayerstat = localStorage.getItem('ajplayerstat');
+    const flatbuttons = localStorage.getItem('flatbuttons');
     if (!(firstload)) {
         localStorage.setItem('firstload', 'true')
         location.reload();
@@ -301,6 +304,9 @@ try {
     }
     if (!(ajplayerstat)) {
         localStorage.setItem('ajplayerstat', 'true');
+    }
+    if (!(flatbuttons)) {
+        localStorage.setItem('flatbuttons', 'false');
     }
     if (proxyvkemoji == 'true') {
         var vkemojiserver = 'https://koke228.ru/vkemoji';
@@ -439,7 +445,7 @@ try {
                 const loadmore = document.createElement('div');
                 loadmore.classList.add('scroll_node');
                 loadmore.classList.add('loadMore_node');
-                loadmore.innerHTML = `<a class="loadMore">Загрузить ещё</a>`
+                loadmore.innerHTML = `<a class="loadMore">${localization.vkifyloadmore}</a>`
                 scrollContainer.appendChild(loadmore);
                 if (onlyscnodes) {
                     return {'scrollContainer': `${scrollContainer.innerHTML}`, 'nowPlayingUrl': adump.context.object.url};
@@ -550,6 +556,9 @@ try {
                 #ajax_audio_player #aj_player_play #aj_player_play_btn {
                   background-position: -183px -28px !important;
                 }
+                #ajax_audio_player #aj_player_close_btn {
+                  filter: brightness(100);
+                }
             `;
         document.head.appendChild(style);
            instance.popperInstance.update()
@@ -582,8 +591,8 @@ try {
            if (/^(playlist\d+_\d+|audios-?\d+)(\?.*)?$/.test(playingNowLnk)) {
                if (/^(audios-?\d+)(\?.*)?$/.test(playingNowLnk)) {
                    try {
-                       let plName = (await window.OVKAPI.call("users.get", {"user_ids": Number(playingNowLnk.match(/[^\d]*(\d+)/)[1]), "fields": "first_name"}))[0].first_name ;
-                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Аудиозаписи <b>${escapeHtml(plName)}</b></a>`
+                       let plName = (await window.OVKAPI.call("users.get", {"user_ids": Number(playingNowLnk.match(/[^\d]*(\d+)/)[1]), "fields": "first_name"}))[0].first_name;
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>${tr('audios')} <b>${escapeHtml(plName)}</b></a>`
                    } catch(error)
                    {
                        console.error('failed to load playing now', error)
@@ -592,7 +601,7 @@ try {
                } if (/^(playlist\d+_\d+)(\?.*)?$/.test(playingNowLnk)) {
                    try {
                        let plName = (await window.OVKAPI.call("audio.getAlbums", {"owner_id": Number(playingNowLnk.match(/_(\d+)$/)[0])})).items.find(item => item.id === Number(playingNowLnk.match(/_(\d+)$/)[1])).title;
-                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Плейлист <b>${escapeHtml(plName)}</b></a>`
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>${tr('playlist')} <b>${escapeHtml(plName)}</b></a>`
                    } catch(error)
                    {
                        console.error('failed to load playing now', error)
@@ -1005,7 +1014,7 @@ input[type~="search"][name~="query"] {
   border-radius: 2px !important;
 }
 img.name-checkmark {
-	content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAALCAMAAACTbPdTAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURbrCzAAAALF4Y9kAAAACdFJOU/8A5bcwSgAAAAlwSFlzAAAOwwAADsMBx2+oZAAAADRJREFUGFdFzQEKADAIAkD9/6c3NcvB6CIQ3AA8QZk5qDL/p0XQnf+eK76vBTUc3LdI+4B8Gk4AVy10OdoAAAAASUVORK5CYII=") !important;
+  content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAALCAMAAACTbPdTAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURbrCzAAAALF4Y9kAAAACdFJOU/8A5bcwSgAAAAlwSFlzAAAOwwAADsMBx2+oZAAAADRJREFUGFdFzQEKADAIAkD9/6c3NcvB6CIQ3AA8QZk5qDL/p0XQnf+eK76vBTUc3LdI+4B8Gk4AVy10OdoAAAAASUVORK5CYII=") !important;
   width: 13px !important;
   height: 11px !important;
   margin-bottom: -1px !important;
@@ -1331,6 +1340,25 @@ div.avatar_block .avatarDelete:hover::before {
   text-decoration: none;
   background-position: 0px -8px !important;
 }
+.bigPlayer .slider, .audioEmbed .track .slider {
+  z-index: 1;
+}
+.selectableTrack .selectableTrackLoadProgress {
+  top: -15px !important;
+  z-index: 0 !important;
+}
+.selectableTrack .selectableTrackLoadProgress .load_bar {
+  background: #bac7d4 !important;
+  border-bottom: none !important;
+  height: 4px;
+}
+.audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
+  background: #d8dee4 !important;
+}
+.page_body .selectableTrack .selectableTrackLoadProgress {
+  top: -13px !important;
+  z-index: 0 !important;
+}
 `;
     const vk2012flat_btns = document.createElement('style');
     vk2012flat_btns.type = 'text/css';
@@ -1340,6 +1368,29 @@ div.avatar_block .avatarDelete:hover::before {
 	background-image: url("data:image/png;base64,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") !important;
 }
 `
+if (flatbuttons == 'true') {
+    const flat_btns = document.createElement('style');
+    flat_btns.type = 'text/css';
+    flat_btns.innerHTML = `
+.button {
+  border: 1px solid #517295 !important;
+  background: #5D81A7 !important;
+}
+input[class="button"]:hover,
+.button:hover {
+  background: #658dae !important;
+}
+input[class="button"]:active,
+.button:active {
+  background: #517295 !important;
+}
+#activetabs a:hover {
+  color: #FFF !important;
+  text-decoration: none;
+}
+`
+    document.querySelector('html').appendChild(flat_btns);
+}
 const admava1 = document.createElement('style');
     admava1.type = 'text/css';
     admava1.innerHTML = `
@@ -2109,15 +2160,6 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             if (boldElement && !isNaN(boldElement.textContent)) {
                 const number = boldElement.textContent;
                 obj.innerHTML = `+${number}`;
-                obj.style.fontWeight = 'bold';
-                obj.style.backgroundColor = '#eee';
-                obj.style.lineHeight = '10px';
-                obj.style.margin = '-1px 3px 0 0';
-                obj.style.padding = '2px';
-                obj.style.borderRadius = '2px';
-                obj.style.height = '11px';
-                obj.style.color = '#47698f';
-                obj.style.display = 'inline-block';
             }
         });
         /* переопределяем функцию замены фавикона, потому что я так захотел */
@@ -2147,10 +2189,10 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                         if (!gift_data[0] == "") {
                             const gift_sender = await window.OVKAPI.call("users.get", {"user_ids": gift_data[0]["from_id"]});
                             window.lastgift = `<div id="news">
-                                <b>Подарок</b>
+                                <b>${tr('gift')}</b>
                                 <hr size="1">
                                 <img src="${gift_data[0]["gift"]["thumb_96"]}" style="width: 100%;">
-                                <text>Отправитель: <a href="/id${gift_sender[0]["id"]}">${gift_sender[0]["first_name"]} ${gift_sender[0]["last_name"]}</a></text>
+                                <text>${tr('sender')}: <a href="/id${gift_sender[0]["id"]}">${gift_sender[0]["first_name"]} ${gift_sender[0]["last_name"]}</a></text>
                                 <br>
                             </div>`
                 const newsDiv = document.querySelector('#news');
@@ -2254,7 +2296,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                                 </div>
                                                 <a href="/search?section=users&q=${srq}">
                                                     <div class="fastresult">
-                                                        Пользователи <b>${escapeHtml(srq)}</b> (${usersd.count})
+                                                        ${tr('users')} <b>${escapeHtml(srq)}</b> (${usersd.count})
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
@@ -2262,7 +2304,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                             <div>
                                                 <a href="/search?section=groups&q=${srq}">
                                                     <div class="fastresult">
-                                                        Группы <b>${escapeHtml(srq)}</b> (${groupsd.count})
+                                                        ${tr('groups')} <b>${escapeHtml(srq)}</b> (${groupsd.count})
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
@@ -2270,7 +2312,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                             <div>
                                                 <a href="/search?section=audios&q=${srq}">
                                                     <div class="fastresult">
-                                                        Аудиозаписи <b>${escapeHtml(srq)}</b> (${audiosd.count})
+                                                        ${tr('audios')} <b>${escapeHtml(srq)}</b> (${audiosd.count})
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
@@ -2278,7 +2320,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                             <div>
                                                 <a href="/search?section=docs&q=${srq}">
                                                     <div class="fastresult">
-                                                        Документы <b>${escapeHtml(srq)}</b> (${docsd.count})
+                                                        ${tr('documents')} <b>${escapeHtml(srq)}</b> (${docsd.count})
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
@@ -2289,7 +2331,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                             <div>
                                                 <a href="/search?section=users&q=${srq}">
                                                     <div class="fastresult">
-                                                        Пользователи <b>${escapeHtml(srq)}</b>
+                                                        ${tr('users')} <b>${escapeHtml(srq)}</b>
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
@@ -2297,7 +2339,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                             <div>
                                                 <a href="/search?section=groups&q=${srq}">
                                                     <div class="fastresult">
-                                                        Группы <b>${escapeHtml(srq)}</b>
+                                                        ${tr('groups')} <b>${escapeHtml(srq)}</b>
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
@@ -2305,7 +2347,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                             <div>
                                                 <a href="/search?section=audios&q=${srq}">
                                                     <div class="fastresult">
-                                                        Аудиозаписи <b>${escapeHtml(srq)}</b>
+                                                        ${tr('audios')} <b>${escapeHtml(srq)}</b>
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
@@ -2313,7 +2355,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                                             <div>
                                                 <a href="/search?section=docs&q=${srq}">
                                                     <div class="fastresult">
-                                                        Документы <b>${escapeHtml(srq)}</b>
+                                                        ${tr('documents')} <b>${escapeHtml(srq)}</b>
                                                         <div class="arrow"></div>
                                                     </div>
                                                 </a>
@@ -2438,7 +2480,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
 </div>
 <div class="vkifytracksplaceholder"></div>
     <div class="musfooter"><span class="playingNow"></span>
-    <input onclick="tippy.hideAll();" value="Закрыть" class="button" type="submit">
+    <input onclick="tippy.hideAll();" value="${tr('close')}" class="button" type="submit">
 </div>
 `
        tippy(document.querySelector('#headerMusicLinkDiv'), {
@@ -2489,7 +2531,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                if (/^(audios-?\d+)(\?.*)?$/.test(playingNowLnk)) {
                    try {
                        let plName = (await window.OVKAPI.call("users.get", {"user_ids": Number(playingNowLnk.match(/[^\d]*(\d+)/)[1]), "fields": "first_name"}))[0].first_name ;
-                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Аудиозаписи <b>${escapeHtml(plName)}</b></a>`
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>${tr('audios')} <b>${escapeHtml(plName)}</b></a>`
                    } catch(error)
                    {
                        console.error('failed to load playing now', error)
@@ -2498,7 +2540,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                } if (/^(playlist\d+_\d+)(\?.*)?$/.test(playingNowLnk)) {
                    try {
                        let plName = (await window.OVKAPI.call("audio.getAlbums", {"owner_id": Number(playingNowLnk.match(/(\d+)_(\d+)/)[1])})).items.find(item => item.id === Number(playingNowLnk.match(/(\d+)_(\d+)/)[2])).title;
-                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>Плейлист <b>${escapeHtml(plName)}</b></a>`
+                       instance.popper.querySelector('.musfooter .playingNow').innerHTML = `${localization.vkifycurrentlyplaying}<a onclick="tippy.hideAll();" href=${playingNowLnk}>${tr('playlist')} <b>${escapeHtml(plName)}</b></a>`
                    } catch(error)
                    {
                        console.error('failed to load playing now', error)
@@ -2655,15 +2697,6 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                     if (boldElement && !isNaN(boldElement.textContent)) {
                         const number = boldElement.textContent;
                         obj.innerHTML = `+${number}`;
-                        obj.style.fontWeight = 'bold';
-                        obj.style.backgroundColor = '#eee';
-                        obj.style.lineHeight = '10px';
-                        obj.style.margin = '-1px 3px 0 0';
-                        obj.style.padding = '2px';
-                        obj.style.borderRadius = '2px';
-                        obj.style.height = '11px';
-                        obj.style.color = '#47698f';
-                        obj.style.display = 'inline-block';
                     }
                 });
             }
@@ -2714,14 +2747,18 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                 if (window.player && window.player.audioPlayer) {
                     const headerMusicBtn = document.querySelector('.headerMusicBtn');
                     setInterval(() => {
+                        const nowplaying = document.querySelectorAll('.audioEntry.nowPlaying');
                         if (window.player.is_closed == true) {
                             headerMusicBtn.classList.add('closed');
+                            if (nowplaying) {nowplaying.forEach(btn => {btn.classList.remove('nowPaused')})};
                         }
                         if (window.player.audioPlayer.paused == true) {
                             headerMusicBtn.classList.add('paused');
+                            if (nowplaying) {nowplaying.forEach(btn => {btn.classList.add('nowPaused')})};
                         }
                         else {
                             headerMusicBtn.classList.remove('paused');
+                            if (nowplaying) {nowplaying.forEach(btn => {btn.classList.remove('nowPaused')})};
                         }
                     }, 50);
                 }
@@ -2948,6 +2985,9 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
                   <br><br>
                   <input type="checkbox" id="newabout" checked="">
                   <label class="nobold" for="newabout">${localization.vkifynewabout}</label>
+                  <br><br>
+                  <input type="checkbox" id="flatbuttons" checked="">
+                  <label class="nobold" for="flatbuttons">${localization.vkifyflatbtns}</label>
                   </div></div>
                <div class="page hidden">
               <div class="container_gray">
@@ -3071,6 +3111,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
             localStorage.setItem('ajplayere', document.getElementById('ajplayere').checked);
             localStorage.setItem('ajplayerm', document.getElementById('ajplayerm').checked);
             localStorage.setItem('ajplayerstat', document.getElementById('ajplayerstat').checked);
+            localStorage.setItem('flatbuttons', document.getElementById('flatbuttons').checked);
 
             NewNotification('VKify', localization.vkifysaved, popupimg, () => {}, 5000, false);
             document.querySelector('#ajloader').style = "display: unset;"
@@ -3104,6 +3145,7 @@ u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) 
         document.getElementById('ajplayere').checked = (/true/).test(localStorage.getItem('ajplayere'));
         document.getElementById('ajplayerm').checked = (/true/).test(localStorage.getItem('ajplayerm'));
         document.getElementById('ajplayerstat').checked = (/true/).test(localStorage.getItem('ajplayerstat'));
+        document.getElementById('flatbuttons').checked = (/true/).test(localStorage.getItem('flatbuttons'));
         const headradios = document.querySelectorAll(`input[type="radio"][name="vk2012head"]`);
         headradios.forEach(radio => {
             if (radio.value === localStorage.getItem('vk2012_header_type')) {
