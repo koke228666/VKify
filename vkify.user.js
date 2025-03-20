@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         VKify
 // @namespace    http://tampermonkey.net/
-// @version      2.1.3
+// @version      2.1.3.1
 // @description  Дополнительные штуки-друюки для VKify
 // @author       koke228
 // @match        *://ovk.to/*
@@ -1373,20 +1373,20 @@ if (flatbuttons == 'true') {
     flat_btns.type = 'text/css';
     flat_btns.innerHTML = `
 .button {
-  border: 1px solid #517295 !important;
-  background: #5D81A7 !important;
+  border: 1px solid #6383a8 !important;
+  background: #6383a8 !important;
+  transition: background-color 100ms ease-in-out !important;
+  text-shadow: none !important;
 }
 input[class="button"]:hover,
 .button:hover {
-  background: #658dae !important;
+  background: #6d8cb0 !important;
+  border: 1px solid #6d8cb0 !important;
 }
 input[class="button"]:active,
 .button:active {
-  background: #517295 !important;
-}
-#activetabs a:hover {
-  color: #FFF !important;
-  text-decoration: none;
+  background: #5c7ca1 !important;
+  border: 1px solid #5c7ca1 !important;
 }
 `
     document.querySelector('html').appendChild(flat_btns);
