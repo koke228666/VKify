@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           VKify
 @namespace      https://github.com/openstyles/stylus
-@version        1.6.5.1
+@version        1.6.6
 @description    sosiski
 @author         koke228
 @homepageURL    https://github.com/koke228666/VKify
@@ -284,8 +284,8 @@ body.scrolled .toTop:hover,
   position: absolute;
   top: 49%;
   transform: translateY(-40%);
-  margin-left: 63%;
   background-position-x: -96px;
+  right: 6px;
 }
 
 .headerMusicBtn.paused {
@@ -852,7 +852,6 @@ textarea {
 }
 .home_button {
   max-height: 32px;
-  margin-bottom: 8px;
 }
 .header_navigation #search_box #searchBoxFastTips .fastresultscount {
   display: block ruby;
@@ -925,7 +924,7 @@ textarea {
 .loadMore {
   display: block;
   padding: 10px 0px 10px;
-  user-select: none;
+  user-select: none !important;
   text-align: center;
 }
 .loadMore:hover {
@@ -935,4 +934,113 @@ textarea {
   height: 81%;
 }
 #ajax_audio_player {z-index: 1023 !important;}
+.audioEntry.nowPaused.nowPlaying .playIcon {
+  background-position-y: 0px !important;
+}
+.sidebar .navigation .link object[type="internal/link"] {
+  font-weight: bold;
+  background-color: rgb(238, 238, 238);
+  line-height: 10px;
+  margin: -1px 3px -2px 0px;
+  padding: 2px;
+  border-radius: 2px;
+  height: 11px;
+  color: rgb(71, 105, 143);
+  display: inline-block;
+}
+.bigPlayer .selectableTrack:hover .slider::after, 
+.audioEmbed .selectableTrack:hover .slider::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  border-radius: 50%;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.additionalButtons .tip_result, .playButtons .tip_result {
+  transform: translate(-55%, -45%) !important;
+}
+/* я хз почему при использовании только .bigPlayer .tip_result всё сыпется */
+.page_body .bigPlayer .tip_result {
+  width: max-content;
+  height: 11px;
+  top: -4px;
+  border: none !important;
+  position: absolute;
+  z-index: 10;
+  transition: all .1s ease-out;
+  user-select: none;
+  transform: translate(-12%, -15%);
+  color: #4d637c;
+  background: rgba(194, 206, 218, 0.9);
+  padding: 1px 4px 5px 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -khtml-border-radius: 3px;
+}
+.page_body .bigPlayer .tip_result::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  width: 7px;
+  height: 4px;
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAECAYAAABCxiV9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAoSURBVBhXYzx07tYzBhyAEURgU2BnpCYFlgQBZAUgCSgTAVBNYGAAAJMuDqQSKxBHAAAAAElFTkSuQmCC') no-repeat scroll transparent;
+  margin-left: -45%;
+}
+
+.tippy-content .bigPlayer .tip_result {
+  width: max-content;
+  height: 11px;
+  top: -4px;
+  border: none !important;
+  position: absolute;
+  z-index: 10;
+  transition: all .1s ease-out;
+  user-select: none;
+  transform: translate(-12%, -15%);
+  color: #4d637c;
+  background: rgba(194, 206, 218, 0.9);
+  padding: 1px 4px 5px 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -khtml-border-radius: 3px;
+}
+.tippy-content .bigPlayer .tip_result::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  width: 7px;
+  height: 4px;
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAECAYAAABCxiV9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAoSURBVBhXYzx07tYzBhyAEURgU2BnpCYFlgQBZAUgCSgTAVBNYGAAAJMuDqQSKxBHAAAAAElFTkSuQmCC') no-repeat scroll transparent;
+  margin-left: -45%;
+}
+.bigPlayer .slider, .audioEmbed .track .slider {
+  z-index: 1;
+}
+.subTracks.shown {display:none !important};
+/*
+object[type="internal/link"] {
+	font-size: 0 !important;
+}
+object[type="internal/link"]:has(a > b) a,
+object[type="internal/link"]:has(b) {
+	font-size: 0 !important;
+}
+object[type="internal/link"]>a,
+object[type="internal/link"] b{
+	font-size: 11px;
+}
+object[type="internal/link"] b:before {
+	content: "+"
+}
+object[type="internal/link"] .linkunderline {
+	text-decoration: none !important;
+} */
 }
