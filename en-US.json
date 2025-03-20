@@ -64,9 +64,12 @@
 "vkifyonline": "Show online (site-wide) in the search bar",
 "vkifyonlinefr": "Show only friends online",
 "vkifyonlinefrpopup": "Online show must be enabled",
-"vkifyliketext": "I like that",
+"vkifyliketext": "Like",
 "vkifynewabout": "Use modern user info block",
 "vkifynpfulls": "Show full information",
-"vkifynpfullh": "Hide full information"
-  
+"vkifynpfullh": "Hide full information",
+"vkifyajplayere": "Show OpenVK's AJAX player",
+"vkifyajplayerm": "Make AJAX player smaller",
+"vkifyajplayerstat": "Make AJAX player static",
+"vkifylastfmlogout": "logout"
 }
