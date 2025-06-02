@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Smithereen Blue
 @namespace      github.com/openstyles/stylus
-@version        1.1.0
+@version        1.1.1
 @description    синий смизерин
 @author         koke228
 ==/UserStyle== */
@@ -741,6 +741,10 @@
     }
     
     /* уведомления */
+    .popupNotification a {
+     color:#B1DAFF;
+    }
+
     .notificationOwnReply,
     .notificationOwnReply .tip,
     .notificationOwnReply.wallPostForm,
