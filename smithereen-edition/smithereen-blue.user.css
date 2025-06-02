@@ -147,12 +147,7 @@
       border:1px solid #c7c8ca !important;
     }
     ul.actualList {
-     color:#738cad;
-    }
-    ul {
         list-style: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4" fill="%23738cad"/></svg>') outside;
-        margin: 10px 0;
-        padding-left: 30px;
         color:#738cad;
     }
 
