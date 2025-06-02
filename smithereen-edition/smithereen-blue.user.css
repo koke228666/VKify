@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Smithereen Blue
 @namespace      github.com/openstyles/stylus
-@version        1.0.0
+@version        1.1.0
 @description    синий смизерин
 @author         koke228
 ==/UserStyle== */
@@ -65,6 +65,9 @@
     /* эффект нажатия кнопочек в шапке */
     .logo:active {
         transform: translateY(1px);
+    }
+    .header a.nav:active {
+        line-height: 40px;
     }
 
     /* тень по бокам контента */
@@ -143,6 +146,15 @@
     .tokenInput {
       border:1px solid #c7c8ca !important;
     }
+    ul.actualList {
+     color:#738cad;
+    }
+    ul {
+        list-style: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4" fill="%23738cad"/></svg>') outside;
+        margin: 10px 0;
+        padding-left: 30px;
+        color:#738cad;
+    }
 
     /* просмотрщик фото */
     .pvTagDelete {
@@ -158,6 +170,9 @@
       position:absolute;
       right:0;
       top:0
+    }
+    .pvLayer .layerTitle .title {
+     color:#45668E;
     }
 
     /* пагинатор */
@@ -220,6 +235,42 @@
       border-color:#2a5880;
     }
 
+    .completionsContainer .bordersOverlay.firstSelected,
+    .tokenInput .bordersOverlay.firstSelected {
+     border-top:1px solid #2a5880;
+    }
+    .completionsContainer .bordersOverlay.lastSelected,
+    .tokenInput .bordersOverlay.lastSelected {
+     border-bottom:1px solid #2a5880;
+    }
+    .popupMenuW .popupMenu.compact:not(.checkboxes)>ul>li.hasSubmenu.selected .itemContent,
+    .popupMenuW .popupMenu.compact:not(.checkboxes)>ul>li.hasSubmenu:hover:not(.forceUnselected) .itemContent,
+    .popupMenuW .popupMenu.compact:not(.checkboxes)>ul>li:not(.hasSubmenu).selected,
+    .popupMenuW .popupMenu.compact:not(.checkboxes)>ul>li:not(.hasSubmenu):hover:not(.forceUnselected) {
+     background-color:#587da1;
+     border:1px solid #2a5880;
+     color:#fff;
+     line-height:17px;
+     padding:0 5px
+    }
+    .popupMenuW .popupMenu .ddIcon {
+     background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg width='14' height='90' xmlns='http://www.w3.org/2000/svg' shape-rendering='crispEdges'%3E%3Cpath d='M3.25 5 3 4.75V4h7v.75L9.75 5h-6.5z' fill='%2345688e'/%3E%3Cpath d='m9.75 5-3 3h-.5l-3-3h6.5z' fill='%2345688e'/%3E%3Cpath d='m9.75 85 .25.25V86H3v-.75l.25-.25h6.5z' fill='%2345688e'/%3E%3Cpath d='m3.25 85 3-3h.5l3 3h-6.5z' fill='%2345688e'/%3E%3Cpath d='M3 22h7v.75L6.75 26h-.5L3 22.75V22zM3 68h7v-.75L6.75 64h-.5L3 67.25V68zM5 57v-7h.75L9 53.25v.5L5.75 57H5zM0 39h3v-3h3v3h3v3H6v3H3v-3H0v-3z' fill='%23fff'/%3E%3C/svg%3E");
+     background-position:0 3px;
+     background-repeat:no-repeat;
+     float:right;
+     height:19px;
+     margin-right:-4px;
+     width:14px
+    }
+    .popupMenuW .popupMenu input:checked,
+    .popupMenuW .popupMenu input:hover:checked {
+     background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='14' shape-rendering='crispEdges' fill='%233b5977'%3E%3Cpath opacity='.2' d='M3 9.5v-2L6.5 10l7-7 1.5-.5v2L6.5 13 3 9.5z'/%3E%3Cpath d='M3 7.5 4.5 6l2 2 7-7L15 2.5 6.5 11 3 7.5z'/%3E%3C/svg%3E")
+    }
+    .completionsContainer .completions .completion.selected b,
+    .tokenInput .completions .completion.selected b {
+     background: #47658C;
+    }
+
     /* поиск */
     .searchFieldWrap .searchField {
       background:url("data:image/svg+xml;charset=utf-8,%3Csvg width='11' height='11' xmlns='http://www.w3.org/2000/svg' fill='rgb(186, 197, 210)' stroke-linejoin='round'%3E%3Cpath d='M3.554 6.032A4.001 4.001 0 0 1 7 0c2.208 0 4 1.792 4 4a4.001 4.001 0 0 1-6.032 3.446L1.5 10.914.086 9.5l3.468-3.468zM7 2a2 2 0 1 1-.001 4.001A2 2 0 0 1 7 2z' fill-rule='evenodd'/%3E%3C/svg%3E") no-repeat 6px 50%,#fff;
@@ -280,23 +331,40 @@
     .headerBG:before {
       content: "";
       display: block;
-      height: 3px;
+      height: 1px;
       background-color: #5B7FA6;
       background: linear-gradient(180deg,#39587B,#416288);
       border-left: 1px solid #48698E;
       border-right: 1px solid #48698E;
      }
     
+    .header a.nav {
+     color:#E8EFF7;
+     display:inline-block;
+     font-weight:700;
+     height:40px;
+     line-height:38px;
+     padding:0 10px;
+     text-shadow:0 1px 1px rgba(0,0,0,.3);
+     text-transform:lowercase;
+     vertical-align:top
+    }
+    .header a.nav:hover,
+    .header a.nav:visited:hover {
+     color: #FFF;
+     text-decoration: none;
+    }
     /* поле поиска в хедере */
     
     #qsearchField {
-      background:url("data:image/svg+xml;charset=utf-8,%3Csvg width='11' height='11' xmlns='http://www.w3.org/2000/svg' fill='rgb(186, 197, 210)' stroke-linejoin='round'%3E%3Cpath d='M3.554 6.032A4.001 4.001 0 0 1 7 0c2.208 0 4 1.792 4 4a4.001 4.001 0 0 1-6.032 3.446L1.5 10.914.086 9.5l3.468-3.468zM7 2a2 2 0 1 1-.001 4.001A2 2 0 0 1 7 2z' fill-rule='evenodd'/%3E%3C/svg%3E") no-repeat 6px 5px,linear-gradient(180deg,#efefef 0,#fff);
-      border:1px solid #3E5F84;
-      border-radius:3px;
-      box-shadow:0 1px 0 #5B7DA4,inset 0 1px 4px silver;
-      height:23px;
-      padding:3px 3px 3px 21px;
-      width:100%
+      background: url("data:image/svg+xml;charset=utf-8,%3Csvg width='11' height='11' xmlns='http://www.w3.org/2000/svg' fill='rgb(186, 197, 210)' stroke-linejoin='round'%3E%3Cpath d='M3.554 6.032A4.001 4.001 0 0 1 7 0c2.208 0 4 1.792 4 4a4.001 4.001 0 0 1-6.032 3.446L1.5 10.914.086 9.5l3.468-3.468zM7 2a2 2 0 1 1-.001 4.001A2 2 0 0 1 7 2z' fill-rule='evenodd'/%3E%3C/svg%3E") no-repeat 6px 5px,linear-gradient(180deg,#efefef 0,#fff);
+      border: 1px solid #55779d !important;
+      border-radius: 3px;
+      box-shadow: 0 1px 0 #6f91bb,inset 0 1px 4px silver;
+      height: 23px;
+      padding: 3px 3px 3px 21px;
+      width: 100%;
+      border-top: 1px solid #375a7f !important;
     }
     .qsearchResult:hover {
       background:rgba(219,227,235,.75);
@@ -442,6 +510,10 @@
       margin:0;
       vertical-align:top
     }
+    
+    .avaImage {
+     border-radius:0px;
+    }
 
     .prefixedInput,
     input[type=date],
@@ -573,6 +645,19 @@
     .postFormNonThumb .attachDelete {
       background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' fill='%237b94b7'%3E%3Cpath shape-rendering='crispEdges' d='M0 2.5 2.5 0l3 3 3-3L11 2.5l-3 3 3 3L8.5 11l-3-3-3 3L0 8.5l3-3z'/%3E%3C/svg%3E") no-repeat 50%;
     }
+    .loadRepliesLink {
+     background:url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg' stroke='rgba(218, 225, 232, 1)' fill-rule='evenodd' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1v6a3 3 0 0 0 3 3h11m-4-4 4 4-4 4' fill='none' stroke-width='2'/%3E%3C/svg%3E") no-repeat 0;
+     background-size:16px;
+     display:block;
+     height:26px;
+     line-height:26px;
+     margin-left:15px;
+     margin-top:-5px;
+     padding-left:24px
+    }
+    .borderBottom {
+     border-bottom:1px solid #DAE1E8;
+    }
 
     /* диалоговые окна ууу */
     .boxTitleBar {
@@ -607,7 +692,46 @@
     .mailHistory .messageRow>.name.self a {
       color:#45668E;
     }
+    .mailMessageRow.unread {
+     background:#edf1f5;
+     border-bottom-color:#DAE1E8
+    }
+    .mailMessageRow.unread .time {
+     color:#45688E;
+    }
+    .mailMessageRow.deleted {
+     background:#edf1f5;
+     border-bottom:1px solid #DAE1E8;
+     color:#67829E;
+     min-height:71px
+    }
+    .friendSelectionBoxContent .separator {
+     align-self:stretch;
+     background:#ebeae1;
+     margin-left:-1px;
+     min-height:420px;
+     width:1px
+    }
+    .friendSelectionBoxContent .list .row .name {
+     color:#45668E;
+     flex:1;
+     font-weight:700;
+     height:13px;
+     line-height:13px;
+     margin-right:5px;
+     -webkit-user-select:none;
+     -moz-user-select:none;
+     -ms-user-select:none;
+     user-select:none
+    }
+    .friendSelectionBoxContent .list.allFriends .icon {
+     background:url("data:image/svg+xml;charset=utf-8,%3Csvg width='12' height='12' xmlns='http://www.w3.org/2000/svg' fill='%239cb4cb' fill-rule='evenodd' stroke-linejoin='round'%3E%3Cpath d='M0 4h4V0h4v4h4v4H8v4H4V8H0V4z'/%3E%3C/svg%3E") no-repeat
+    }
+    .friendSelectionBoxContent .list.selectedFriends .icon {
+     background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' fill='%237b94b7'%3E%3Cpath shape-rendering='crispEdges' d='M0 2.5 2.5 0l3 3 3-3L11 2.5l-3 3 3 3L8.5 11l-3-3-3 3L0 8.5l3-3z'/%3E%3C/svg%3E") no-repeat
+    }
     
+
     /* голосование */
     .poll .pollResultRow .pollResultBarFG {
       background-color:#d9e1ea;
@@ -622,11 +746,10 @@
     }
     
     /* уведомления */
-    .notificationOwnReply {
-      background:#edf0f5;
-      border:1px solid #dbdce0;
-    }
-    .notificationOwnReply .tip {
+    .notificationOwnReply,
+    .notificationOwnReply .tip,
+    .notificationOwnReply.wallPostForm,
+    .notificationOwnReply.wallPostForm .tip {
       background:#edf0f5;
       border:1px solid #dbdce0;
     }
@@ -701,5 +824,16 @@
     }
     .wallPostForm .attachment.uploading .deleteBtn:after {
       background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' fill='%236B8DB1'%3E%3Cpath d='M1.25-.25 3.5 2 5.75-.25l1.5 1.5L5 3.5l2.25 2.25-1.5 1.5L3.5 5 1.25 7.25l-1.5-1.5L2 3.5-.25 1.25z'/%3E%3C/svg%3E")
+    }
+    
+    /* настройки */
+    .wordFilterWord .deleteButton {
+     background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' fill='%237b94b7'%3E%3Cpath shape-rendering='crispEdges' d='M0 2.5 2.5 0l3 3 3-3L11 2.5l-3 3 3 3L8.5 11l-3-3-3 3L0 8.5l3-3z'/%3E%3C/svg%3E") no-repeat 50%;
+     flex:none;
+     height:21px;
+     margin-left:5px;
+     opacity:.7;
+     transition:opacity .2s ease;
+     width:21px
     }
 }
