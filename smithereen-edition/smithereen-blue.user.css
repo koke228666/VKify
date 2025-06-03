@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Smithereen Blue
 @namespace      github.com/openstyles/stylus
-@version        1.1.2
+@version        1.1.3
 @description    синий смизерин
 @author         koke228
 ==/UserStyle== */
@@ -664,6 +664,10 @@
     }
     .borderBottom {
      border-bottom:1px solid #DAE1E8;
+    }
+    .expandableText>label {
+      color:#45688E;
+      cursor:pointer;
     }
 
     /* диалоговые окна ууу */
